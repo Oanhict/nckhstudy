@@ -169,6 +169,27 @@ textarea{min-height:76px;resize:vertical}
   .mobnav{display:grid;gap:8px;margin-bottom:14px}
   .row,.cmp,.phases,.stats{grid-template-columns:1fr}
 }
+.topic{font-family:var(--display);font-weight:800;font-size:clamp(17px,2.4vw,21px);line-height:1.4;text-transform:uppercase;letter-spacing:.01em;color:var(--fg);max-width:none}
+.deliv{margin:6px 0 0;padding-left:18px;columns:2;column-gap:28px}
+.deliv li{break-inside:avoid}
+.subh{font-family:var(--display);font-weight:700;font-size:16.5px;color:var(--ph)}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.row3>*{min-width:0}
+.qlist{display:grid;gap:10px}
+.qcard{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:12px 16px;font-size:14.5px;display:grid;gap:6px;overflow-wrap:anywhere}
+.qcard.warn{border-color:var(--orange)}
+.opts2{display:flex;flex-wrap:wrap;gap:6px 18px}
+.opts2 .ans{color:var(--good);font-weight:600}
+.imgph{justify-self:start;font-size:13px;border:1.5px dashed var(--line);border-radius:8px;padding:4px 10px;color:var(--muted)}
+.tag{display:inline-block;font-size:12.5px;border-radius:999px;padding:2px 10px;background:var(--orange-soft);margin:2px 6px 0 0}
+.tag.ok-tag{background:var(--green-soft)}
+.alertbar{border-radius:10px;padding:10px 14px;font-weight:600;background:var(--paper);border:1px solid var(--line)}
+.alertbar.lv0{background:var(--green-soft);border-color:transparent}
+.alertbar.lv1{background:var(--blue-soft);border-color:transparent}
+.alertbar.lv2{background:var(--orange-soft);border-color:var(--orange)}
+.alertbar.lv3{background:var(--bad);color:var(--onacc);border-color:transparent}
+.exam{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px}
+@media (max-width:860px){.deliv{columns:1}.row3{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -196,260 +217,294 @@ textarea{min-height:76px;resize:vertical}
 <script>
 const API=String(window.NCKH_API||"").trim();
 const ONLINE=/^https:\/\/script\.google\.com\/.+\/exec$/.test(API);
-const CASE="Ứng dụng nhắc học trên điện thoại có giúp học sinh lớp 10 nộp bài tập về nhà đúng hạn hơn không?";
+const CASE="Nghiên cứu giải pháp tự động trích xuất đề thi THPT từ tài liệu Word (có hình ảnh) tích hợp cơ chế phát hiện và cảnh báo vi phạm quy chế thi phục vụ hệ thống ôn thi trực tuyến";
+const RQ=["RQ1. Giải pháp trích xuất đúng bao nhiêu phần trăm câu hỏi (gồm nội dung, phương án, đáp án và hình ảnh) từ các đề thi Word THPT?","RQ2. Cơ chế giám sát phát hiện đúng bao nhiêu phần trăm hành vi vi phạm (rời trang, sao chép, thoát toàn màn hình) và báo nhầm bao nhiêu lần?","RQ3. Giáo viên tiết kiệm được bao nhiêu thời gian khi đưa một đề lên hệ thống, so với nhập thủ công?"];
 const L=[
-{id:"bai-1",t:"Đặt câu hỏi nghiên cứu",d:"Từ điều em tò mò đến một câu hỏi trả lời được bằng dữ liệu",
-goals:["Phân biệt chủ đề, vấn đề và câu hỏi nghiên cứu","Biết 5 tiêu chí của một câu hỏi tốt","Tự viết được câu hỏi nghiên cứu cho đề tài của mình"],
+{id:"bai-1",t:"Đặt câu hỏi nghiên cứu",d:"Hiểu đề tài và tách tên đề tài thành những câu hỏi trả lời được bằng dữ liệu",
+goals:["Giải thích được đề tài giải quyết vấn đề gì, cho ai","Tách tên đề tài dài thành các phần và các câu hỏi nghiên cứu","Kiểm tra câu hỏi theo 5 tiêu chí của một câu hỏi tốt"],
 body:`
-<h2>Mọi nghiên cứu bắt đầu từ một quan sát</h2>
-<p>Nhà khoa học không bắt đầu bằng câu trả lời. Họ bắt đầu bằng một điều khiến họ thắc mắc: <mark>Vì sao? Bao nhiêu? Điều gì sẽ xảy ra nếu…?</mark> Hãy để ý những điều lặp đi lặp lại quanh em: ở lớp học, ở nhà, trên điện thoại.</p>
+<h2>Đề tài bắt đầu từ một vấn đề có thật</h2>
+<p>Thầy cô thường soạn đề thi trên Word. Muốn đưa đề lên hệ thống ôn thi trực tuyến, thầy cô phải gõ lại hoặc sao chép từng câu, từng phương án, rồi tải từng hình vẽ lên. Việc này <mark>mất nhiều thời gian và dễ sai</mark>: hình gắn nhầm câu, mất công thức, chọn nhầm đáp án.</p>
+<p>Khi học sinh làm bài ôn trực tuyến, các em có thể mở tab khác để tra cứu hoặc sao chép đề ra ngoài. Khi đó, điểm ôn tập không phản ánh đúng năng lực thật.</p>
 <h3>Ba tầng: chủ đề → vấn đề → câu hỏi</h3>
 <div class="tbl"><table>
-<tr><th>Tầng</th><th>Ví dụ</th><th>Đặc điểm</th></tr>
-<tr><td>Chủ đề</td><td>Công nghệ trong học tập</td><td>Rất rộng, chưa nghiên cứu được</td></tr>
-<tr><td>Vấn đề</td><td>Nhiều bạn lớp 10 hay quên nộp bài tập về nhà</td><td>Một điều chưa ổn có thể quan sát được</td></tr>
-<tr><td>Câu hỏi</td><td>Ứng dụng nhắc học có giúp tăng tỉ lệ nộp bài đúng hạn không?</td><td>Cụ thể, trả lời được bằng dữ liệu</td></tr>
+<tr><th>Tầng</th><th>Trong đề tài này</th></tr>
+<tr><td>Chủ đề</td><td>Công nghệ thông tin trong kiểm tra, đánh giá</td></tr>
+<tr><td>Vấn đề</td><td>Đưa đề Word lên hệ thống ôn thi mất thời gian, dễ lỗi; học sinh dễ vi phạm quy chế khi làm bài trực tuyến</td></tr>
+<tr><td>Câu hỏi</td><td>Một giải pháp tự động có trích xuất đề chính xác và phát hiện vi phạm đáng tin cậy không?</td></tr>
 </table></div>
-<h3>5 tiêu chí của một câu hỏi tốt</h3>
+<h3>Tách tên đề tài thành từng phần</h3>
+<p>Tên đề tài dài vì nó chứa nhiều ý. Mỗi ý là một việc em phải làm và phải đánh giá được.</p>
+<div class="tbl"><table>
+<tr><th>Phần trong tên đề tài</th><th>Nghĩa là hệ thống phải…</th></tr>
+<tr><td>Tự động trích xuất đề thi THPT</td><td>Đọc file Word, tách đúng từng câu hỏi, các phương án và đáp án đúng</td></tr>
+<tr><td>Từ tài liệu Word (có hình ảnh)</td><td>Giữ được hình vẽ, bảng, công thức và gắn đúng vào câu hỏi chứa chúng</td></tr>
+<tr><td>Cơ chế phát hiện vi phạm quy chế thi</td><td>Nhận biết học sinh rời trang làm bài, sao chép, dán, thoát toàn màn hình</td></tr>
+<tr><td>Cảnh báo</td><td>Nhắc nhở và cảnh báo theo mức, ghi nhật ký để giáo viên xem lại</td></tr>
+<tr><td>Phục vụ hệ thống ôn thi trực tuyến</td><td>Người dùng là giáo viên và học sinh THPT; sản phẩm dùng được trong thực tế</td></tr>
+</table></div>
+<h3>5 tiêu chí của một câu hỏi nghiên cứu tốt</h3>
 <ol>
-<li><b>Cụ thể:</b> nói rõ đối tượng nào, ở đâu, điều gì.</li>
-<li><b>Đo được:</b> có thể đếm, đo hoặc ghi nhận bằng số liệu hay quan sát.</li>
-<li><b>Khả thi:</b> em làm được trong vài tuần, với dụng cụ và chi phí sẵn có.</li>
-<li><b>Chưa có đáp án sẵn:</b> không tra Google là ra ngay.</li>
-<li><b>Có ý nghĩa:</b> câu trả lời giúp ích cho ai đó.</li>
+<li><b>Cụ thể:</b> nói rõ đối tượng, phạm vi, điều cần tìm.</li>
+<li><b>Đo được:</b> trả lời bằng con số hoặc quan sát.</li>
+<li><b>Khả thi:</b> làm được trong thời gian và điều kiện của em.</li>
+<li><b>Chưa có đáp án sẵn.</b></li>
+<li><b>Có ý nghĩa:</b> câu trả lời giúp ích cho giáo viên, học sinh.</li>
 </ol>
 <div class="cmp">
-<div class="x"><b>Chưa tốt</b><p>"Điện thoại có tốt cho học sinh không?"<br>Quá rộng. "Tốt" là tốt về mặt nào? Đo bằng cách nào?</p></div>
-<div class="o"><b>Tốt hơn</b><p>"Học sinh lớp 10A dùng điện thoại hơn 2 giờ mỗi tối có điểm kiểm tra 15 phút môn Toán thấp hơn bạn dùng dưới 1 giờ không?"</p></div>
+<div class="x"><b>Chưa tốt</b><p>"Hệ thống trích xuất đề có tốt không?"<br>"Tốt" là tốt về mặt nào? Đo bằng gì?</p></div>
+<div class="o"><b>Tốt hơn</b><p>"Giải pháp trích xuất đúng bao nhiêu phần trăm câu hỏi, kể cả hình ảnh, từ 30 đề Word môn Toán, Vật lí và Sinh học?"</p></div>
 </div>
-<h3>Các dạng câu hỏi thường gặp</h3>
-<ul>
-<li><b>Mô tả:</b> Bao nhiêu phần trăm học sinh…? (khảo sát)</li>
-<li><b>So sánh:</b> Nhóm A có khác nhóm B không? (thí nghiệm, đối chứng)</li>
-<li><b>Quan hệ:</b> Khi X tăng thì Y có thay đổi không? (tương quan)</li>
-<li><b>Thiết kế, chế tạo:</b> Làm thế nào để tạo ra… có hiệu quả hơn…? (dự án kỹ thuật, phần mềm)</li>
-</ul>`,
-caseText:`Quan sát: trong lớp 10A, mỗi tuần có khoảng 8 đến 10 bạn quên nộp bài. Câu hỏi nghiên cứu: <b>${CASE}</b>`,
+<h3>Ba câu hỏi nghiên cứu của đề tài</h3>
+<ul>${RQ.map(q=>`<li>${q}</li>`).join("")}</ul>
+<p>Đề tài này thuộc dạng <b>thiết kế, chế tạo</b>: em tạo ra một sản phẩm phần mềm, sau đó dùng số liệu để chứng minh sản phẩm hoạt động tốt đến mức nào.</p>`,
+caseText:`Sản phẩm của bước này: ba câu hỏi nghiên cứu RQ1, RQ2, RQ3, được thầy cô hướng dẫn duyệt. Dùng công cụ bên dưới để tự kiểm tra từng câu.`,
 tool:"question",
 quiz:[
-{q:"Câu nào là câu hỏi nghiên cứu tốt nhất?",o:["Mạng xã hội có hại không?","Học sinh có thích học online không?","Học sinh lớp 11 trường em ngủ trung bình mấy giờ vào đêm trước ngày thi?","Vì sao bầu trời có màu xanh?"],a:2,e:"Câu C nêu rõ đối tượng, thời điểm và đại lượng cần đo (số giờ ngủ). Câu A và B dùng từ khó đo (\"có hại\", \"thích\"). Câu D đã có đáp án trong sách."},
-{q:"Câu hỏi dưới đây thuộc dạng nào?",ctx:"Làm thế nào để thiết kế ứng dụng giúp học sinh nhớ từ vựng tiếng Anh lâu hơn?",o:["Mô tả","So sánh","Quan hệ","Thiết kế, chế tạo"],a:3,e:"Câu hỏi hướng tới tạo ra một sản phẩm, nên thuộc dạng thiết kế, chế tạo."}
+{q:"Câu nào là câu hỏi nghiên cứu đo được cho đề tài?",o:["Hệ thống trích xuất đề có tốt không?","Giải pháp trích xuất đúng bao nhiêu phần trăm câu hỏi từ 30 đề Word môn Toán?","Word có phải phần mềm soạn thảo tốt nhất không?","Học sinh có thích ôn thi trực tuyến không?"],a:1,e:"Câu B nêu rõ phạm vi (30 đề Word môn Toán) và đại lượng đo (phần trăm câu trích đúng). Câu A dùng từ \"tốt\" nên không đo được."},
+{q:"Đề tài này thuộc dạng câu hỏi nghiên cứu nào?",o:["Mô tả","So sánh","Quan hệ","Thiết kế, chế tạo"],a:3,e:"Đề tài tạo ra một giải pháp phần mềm rồi đánh giá nó, nên thuộc dạng thiết kế, chế tạo."}
 ]},
-{id:"bai-2",t:"Tìm và đánh giá tài liệu",d:"Biết người khác đã tìm ra gì, và nguồn nào đáng tin",
-goals:["Biết tìm tài liệu bằng Google Scholar và từ khóa phù hợp","Đánh giá độ tin cậy của nguồn bằng bộ tiêu chí CRAAP","Trích dẫn nguồn đúng chuẩn APA"],
+{id:"bai-2",t:"Tìm và đánh giá tài liệu",d:"Biết các giải pháp đã có, công nghệ cần dùng và khoảng trống của đề tài",
+goals:["Biết cần tìm tài liệu về những mảng nào cho đề tài","Đánh giá độ tin cậy của nguồn bằng bộ tiêu chí CRAAP","Lập bảng tổng quan để chỉ ra khoảng trống nghiên cứu"],
 body:`
-<h2>Vì sao phải đọc tài liệu?</h2>
-<p>Để không làm lại điều người khác đã làm, để học cách họ đo lường, và để tìm ra <mark>khoảng trống</mark>: điều chưa ai trả lời, hoặc chưa ai trả lời cho học sinh Việt Nam.</p>
-<h3>Tìm ở đâu?</h3>
-<ul>
-<li><b>Google Scholar</b> (scholar.google.com): bài báo khoa học. Thử tìm bằng cả tiếng Anh, ví dụ <code>homework reminder app students</code>.</li>
-<li><b>Sách giáo khoa và sách chuyên khảo</b> ở thư viện trường.</li>
-<li><b>Trang của cơ quan chính thức:</b> Bộ Giáo dục và Đào tạo, Tổng cục Thống kê, WHO.</li>
-<li><b>Báo cáo các đề tài khoa học kỹ thuật</b> những năm trước.</li>
-</ul>
-<h3>Mẹo tìm kiếm</h3>
+<h2>Đề tài cần tìm hiểu bốn mảng tài liệu</h2>
 <div class="tbl"><table>
-<tr><th>Cách viết</th><th>Tác dụng</th></tr>
-<tr><td><code>"ứng dụng nhắc nhở"</code></td><td>Tìm đúng cụm từ trong ngoặc kép</td></tr>
-<tr><td><code>học sinh -đại học</code></td><td>Loại các kết quả có chữ "đại học"</td></tr>
-<tr><td><code>site:edu.vn</code></td><td>Chỉ tìm trên trang của các trường</td></tr>
-<tr><td><code>filetype:pdf</code></td><td>Chỉ tìm file PDF (thường là báo cáo)</td></tr>
+<tr><th>Mảng</th><th>Em cần biết</th><th>Nguồn gợi ý</th></tr>
+<tr><td>Cấu trúc file Word</td><td>File .docx thực chất là một gói nén chứa các file XML (chuẩn Office Open XML). Hình ảnh nằm trong thư mục <code>word/media</code> và được tham chiếu từ nội dung văn bản.</td><td>Tài liệu chính thức của Microsoft về Office Open XML</td></tr>
+<tr><td>Công cụ đọc Word</td><td>Thư viện lập trình đọc được đoạn văn, định dạng (gạch chân, màu chữ) và hình ảnh</td><td>Tài liệu của python-docx, mammoth, Pandoc</td></tr>
+<tr><td>Giám sát thi trực tuyến</td><td>Trình duyệt báo được khi trang bị ẩn, mất tiêu điểm, thoát toàn màn hình, có thao tác sao chép</td><td>MDN Web Docs (Page Visibility API, Fullscreen API); bài báo về "online proctoring"</td></tr>
+<tr><td>Quy định</td><td>Cấu trúc, định dạng đề thi tốt nghiệp THPT; các mức xử lý vi phạm trong quy chế thi</td><td>Văn bản của Bộ Giáo dục và Đào tạo</td></tr>
+</table></div>
+<h3>Từ khóa tìm kiếm gợi ý</h3>
+<div class="tbl"><table>
+<tr><th>Gõ vào ô tìm kiếm</th><th>Để tìm</th></tr>
+<tr><td><code>docx extract questions images python</code></td><td>Cách người khác tách câu hỏi và hình ảnh từ Word</td></tr>
+<tr><td><code>online exam proctoring tab switching detection</code></td><td>Nghiên cứu về phát hiện rời trang khi thi trực tuyến</td></tr>
+<tr><td><code>"academic integrity" online exam filetype:pdf</code></td><td>Bài báo về liêm chính trong thi trực tuyến</td></tr>
+<tr><td><code>cấu trúc định dạng đề thi tốt nghiệp THPT site:moet.gov.vn</code></td><td>Văn bản chính thức về cấu trúc đề thi</td></tr>
 </table></div>
 <h3>Đánh giá nguồn bằng bộ tiêu chí CRAAP</h3>
 <ul>
-<li><b>Currency (Mới):</b> xuất bản khi nào? Với công nghệ, nguồn trên 5 năm có thể đã cũ.</li>
-<li><b>Relevance (Liên quan):</b> có đúng đối tượng, đúng câu hỏi của em không?</li>
-<li><b>Authority (Uy tín):</b> tác giả là ai? Thuộc tổ chức nào?</li>
-<li><b>Accuracy (Chính xác):</b> có số liệu, có trích dẫn, có thể kiểm chứng không?</li>
-<li><b>Purpose (Mục đích):</b> viết để thông tin hay để bán hàng, quảng cáo?</li>
+<li><b>Currency (Mới):</b> công nghệ web thay đổi nhanh; ưu tiên tài liệu trong 5 năm gần đây.</li>
+<li><b>Relevance (Liên quan):</b> có đúng file .docx, đúng đề thi trắc nghiệm, đúng thi trên trình duyệt không?</li>
+<li><b>Authority (Uy tín):</b> tài liệu chính thức của thư viện, của Bộ, của tạp chí khoa học.</li>
+<li><b>Accuracy (Chính xác):</b> có ví dụ chạy được, có số liệu kiểm chứng không?</li>
+<li><b>Purpose (Mục đích):</b> trang quảng cáo phần mềm chống gian lận thường phóng đại hiệu quả.</li>
 </ul>
-<h3>Ghi chép và trích dẫn</h3>
-<p>Mỗi tài liệu đọc xong, ghi 3 dòng: <i>Họ hỏi gì? Họ làm thế nào? Họ tìm ra gì?</i> Dùng ý của người khác thì <b>phải ghi nguồn</b>; không ghi nguồn là đạo văn.</p>`,
-caseText:`Em tìm thấy một nghiên cứu nước ngoài cho thấy tin nhắn nhắc nhở giúp sinh viên đại học nộp bài đúng hạn hơn. Khoảng trống: chưa có nghiên cứu nào với học sinh THPT Việt Nam dùng ứng dụng nhắc học.`,
+<h3>Bảng tổng quan: tìm khoảng trống</h3>
+<p>Sau khi đọc, lập bảng so sánh các giải pháp em tìm được. Ô nào giải pháp hiện có còn thiếu chính là <mark>khoảng trống</mark> mà đề tài lấp vào. Bảng dưới là khung gợi ý; em phải tự kiểm chứng từng ô khi đọc tài liệu.</p>
+<div class="tbl"><table>
+<tr><th>Giải pháp</th><th>Giữ hình ảnh</th><th>Hiểu định dạng đề THPT Việt Nam</th><th>Cảnh báo vi phạm</th></tr>
+<tr><td>Nhập đề thủ công trên hệ thống học trực tuyến</td><td>Có, nhưng làm tay</td><td>Tùy người nhập</td><td>Tùy hệ thống</td></tr>
+<tr><td>Nhập theo định dạng văn bản (ví dụ Aiken của Moodle)</td><td>Hạn chế</td><td>Phải sửa đề theo mẫu riêng</td><td>Không</td></tr>
+<tr><td>Phần mềm giám sát thi chuyên dụng</td><td>Không liên quan</td><td>Không liên quan</td><td>Có</td></tr>
+<tr><td><b>Đề tài của em</b></td><td><b>Có, tự động</b></td><td><b>Có</b></td><td><b>Có</b></td></tr>
+</table></div>
+<p>Dùng ý của người khác thì <b>phải ghi nguồn</b>. Không ghi nguồn là đạo văn.</p>`,
+caseText:`Sản phẩm của bước này: danh sách ít nhất 10 tài liệu đã đọc, trích dẫn theo chuẩn APA, và bảng tổng quan chỉ ra khoảng trống: chưa có giải pháp vừa trích xuất tự động đề Word có hình ảnh theo định dạng đề THPT, vừa tích hợp cảnh báo vi phạm.`,
 tool:"source",
 quiz:[
-{q:"Em làm đề tài về giấc ngủ của học sinh. Nguồn nào đáng tin cậy nhất?",o:["Bài viết trên trang bán thực phẩm chức năng","Bài báo khoa học có số liệu và tài liệu tham khảo","Video TikTok có 2 triệu lượt xem","Bình luận trên diễn đàn"],a:1,e:"Bài báo khoa học đạt cả 5 tiêu chí CRAAP. Trang bán hàng có mục đích quảng cáo. Lượt xem nhiều không phải là bằng chứng."},
-{q:"Em chép một đoạn từ Wikipedia vào báo cáo và không ghi nguồn. Việc này gọi là gì?",o:["Trích dẫn","Tóm tắt","Đạo văn","Tham khảo hợp lệ"],a:2,e:"Dùng lời hoặc ý của người khác mà không ghi nguồn là đạo văn, kể cả khi nguồn đó miễn phí."}
+{q:"Em cần tìm cách đọc file Word bằng lập trình. Nguồn nào đáng tin nhất?",o:["Tài liệu chính thức của thư viện python-docx","Bình luận trong một nhóm Facebook","Video quảng cáo phần mềm","Bài viết không ghi tác giả, không ghi ngày"],a:0,e:"Tài liệu chính thức do chính nhóm phát triển thư viện viết, có ví dụ và được cập nhật. Các nguồn còn lại không kiểm chứng được."},
+{q:"Khoảng trống nào phù hợp nhất để nêu trong đề tài?",o:["Chưa ai làm phần mềm thi trực tuyến","Chưa có giải pháp vừa trích xuất đề Word có hình ảnh theo định dạng THPT, vừa cảnh báo vi phạm","Máy tính không đọc được file Word","Học sinh không muốn ôn thi"],a:1,e:"Câu B chỉ ra đúng điều các giải pháp hiện có còn thiếu. Câu A sai thực tế; câu C sai về kỹ thuật."}
 ]},
-{id:"bai-3",t:"Giả thuyết và các biến",d:"Dự đoán có căn cứ, và biết cái gì thay đổi, cái gì được đo",
-goals:["Viết giả thuyết theo mẫu Nếu… thì… vì…","Phân biệt biến độc lập, biến phụ thuộc và biến kiểm soát","Hiểu vì sao cần nhóm đối chứng"],
+{id:"bai-3",t:"Giả thuyết và các biến",d:"Dự đoán kết quả có căn cứ, và biết điều gì thay đổi, điều gì được đo",
+goals:["Viết giả thuyết đo được cho từng câu hỏi nghiên cứu","Xác định biến độc lập, biến phụ thuộc, biến kiểm soát của đề tài","Hiểu vai trò của phương án so sánh (nhập thủ công)"],
 body:`
-<h2>Giả thuyết là một dự đoán có thể kiểm chứng</h2>
-<p>Giả thuyết không phải là đoán bừa. Nó dựa trên những gì em đã đọc ở bài 2. Mẫu câu dễ dùng:</p>
-<p class="out"><b>Nếu</b> [em thay đổi điều gì] <b>thì</b> [điều gì sẽ xảy ra, đo bằng gì] <b>vì</b> [lý do dựa trên tài liệu].</p>
-<p>Một giả thuyết tốt phải <mark>có thể sai</mark>. Nếu không có kết quả nào có thể bác bỏ nó, đó không phải là giả thuyết khoa học.</p>
-<h3>Ba loại biến</h3>
+<h2>Giả thuyết là dự đoán có thể kiểm chứng</h2>
+<p>Mỗi câu hỏi nghiên cứu cần một giả thuyết có <b>con số cụ thể</b>, để sau này em biết giả thuyết đúng hay sai.</p>
+<p class="out"><b>Nếu</b> [em làm gì] <b>thì</b> [kết quả nào, đo bằng gì] <b>vì</b> [lý do dựa trên tài liệu].</p>
 <div class="tbl"><table>
-<tr><th>Biến</th><th>Là gì</th><th>Trong đề tài mẫu</th></tr>
-<tr><td><b>Độc lập</b></td><td>Điều em chủ động thay đổi</td><td>Có hay không dùng ứng dụng nhắc học</td></tr>
-<tr><td><b>Phụ thuộc</b></td><td>Điều em đo để xem có thay đổi không</td><td>Tỉ lệ bài tập nộp đúng hạn</td></tr>
-<tr><td><b>Kiểm soát</b></td><td>Điều phải giữ giống nhau giữa các nhóm</td><td>Cùng khối lớp, cùng số bài tập, cùng giáo viên, cùng thời gian</td></tr>
+<tr><th>Câu hỏi</th><th>Giả thuyết</th></tr>
+<tr><td>RQ1</td><td>Giải pháp trích xuất đúng ít nhất 95% số câu hỏi (gồm hình ảnh) trong bộ 30 đề Word soạn theo mẫu chuẩn.</td></tr>
+<tr><td>RQ2</td><td>Cơ chế giám sát phát hiện ít nhất 90% số lần vi phạm theo kịch bản, và báo nhầm không quá 5%.</td></tr>
+<tr><td>RQ3</td><td>Dùng giải pháp tự động giảm ít nhất 70% thời gian đưa một đề 40 câu lên hệ thống so với nhập thủ công.</td></tr>
 </table></div>
-<h3>Nhóm thực nghiệm và nhóm đối chứng</h3>
-<p>Nếu chỉ cho cả lớp dùng ứng dụng rồi thấy tỉ lệ nộp bài tăng, em chưa biết được là nhờ ứng dụng hay nhờ… sắp kiểm tra giữa kỳ. Vì vậy cần <b>nhóm đối chứng</b>: một nhóm tương tự nhưng không dùng ứng dụng. Chia nhóm <b>ngẫu nhiên</b> (bốc thăm) để hai nhóm giống nhau nhất có thể.</p>`,
-caseText:`Giả thuyết: <b>Nếu</b> học sinh lớp 10 dùng ứng dụng nhắc học trong 4 tuần <b>thì</b> tỉ lệ bài tập nộp đúng hạn sẽ cao hơn nhóm không dùng, <b>vì</b> các nghiên cứu cho thấy lời nhắc đúng lúc giúp giảm việc quên.`,
+<p>Giả thuyết có thể sai. Nếu kết quả chỉ đạt 85%, đó vẫn là một kết quả khoa học có giá trị; em phân tích vì sao.</p>
+<h3>Ba loại biến trong đề tài</h3>
+<div class="tbl"><table>
+<tr><th>Biến</th><th>Là gì</th><th>Trong đề tài (RQ3)</th></tr>
+<tr><td><b>Độc lập</b></td><td>Điều em chủ động thay đổi</td><td>Cách đưa đề lên hệ thống: nhập thủ công hay dùng giải pháp tự động</td></tr>
+<tr><td><b>Phụ thuộc</b></td><td>Điều em đo</td><td>Thời gian đưa đề lên hệ thống; số câu bị sai</td></tr>
+<tr><td><b>Kiểm soát</b></td><td>Điều giữ giống nhau</td><td>Cùng bộ đề, cùng người thực hiện, cùng máy tính, cùng trình duyệt</td></tr>
+</table></div>
+<h3>Phương án so sánh</h3>
+<p>Muốn nói giải pháp "nhanh hơn", em phải nói <i>nhanh hơn cái gì</i>. Trong đề tài này, phương án so sánh (đối chứng) là <b>cách làm hiện tại: nhập đề thủ công</b>. Với RQ2, phương án so sánh là <b>những gì thực sự xảy ra</b>: em ghi lại học sinh đã làm hành động nào, rồi đối chiếu với điều hệ thống ghi nhận.</p>`,
+caseText:`Sản phẩm của bước này: ba giả thuyết H1, H2, H3 tương ứng với ba câu hỏi nghiên cứu, kèm bảng biến của từng thử nghiệm.`,
 tool:"vars",
 quiz:[
-{q:"Trong thí nghiệm dưới đây, biến phụ thuộc là gì?",ctx:"Tưới cây đậu bằng 3 lượng nước khác nhau, sau 2 tuần đo chiều cao cây.",o:["Lượng nước","Chiều cao cây","Loại đất","Ánh sáng"],a:1,e:"Chiều cao cây là điều em đo, nên là biến phụ thuộc. Lượng nước là biến độc lập. Đất và ánh sáng là biến kiểm soát."},
-{q:"Nhóm đối chứng dùng để làm gì?",o:["Để có thêm số liệu","Để so sánh, biết kết quả có phải do tác động của em gây ra không","Để báo cáo dài hơn","Để thay cho nhóm thực nghiệm"],a:1,e:"Nhóm đối chứng cho biết điều gì xảy ra khi không có tác động. Chênh lệch giữa hai nhóm mới là hiệu quả thật."}
+{q:"Đo thời gian đưa đề lên hệ thống bằng cách nhập thủ công và bằng giải pháp tự động. Biến độc lập là gì?",o:["Thời gian đưa đề lên hệ thống","Cách đưa đề lên: thủ công hay tự động","Số câu trong đề","Loại máy tính"],a:1,e:"Cách đưa đề lên là điều em chủ động thay đổi. Thời gian là điều em đo (biến phụ thuộc)."},
+{q:"Giả thuyết nào kiểm chứng được?",o:["Hệ thống sẽ hoạt động rất tốt","Giải pháp trích xuất đúng ít nhất 95% số câu hỏi trong bộ 30 đề kiểm thử","Học sinh sẽ không bao giờ gian lận","Hệ thống hiện đại nhất Việt Nam"],a:1,e:"Câu B có ngưỡng cụ thể (95%) và bộ dữ liệu cụ thể (30 đề), nên đo được và có thể sai."}
 ]},
-{id:"bai-4",t:"Thiết kế phương pháp",d:"Chọn cách làm, chọn mẫu, và nghiên cứu một cách có đạo đức",
-goals:["Chọn phương pháp phù hợp với dạng câu hỏi","Hiểu mẫu nghiên cứu và vì sao cỡ mẫu quan trọng","Biết các nguyên tắc đạo đức khi nghiên cứu với con người"],
+{id:"bai-4",t:"Thiết kế phương pháp",d:"Thiết kế giải pháp, chuẩn bị dữ liệu kiểm thử và nghiên cứu có đạo đức",
+goals:["Nắm các bước của phương pháp thiết kế, chế tạo và thử nghiệm","Chuẩn bị bộ dữ liệu kiểm thử có đáp án chuẩn","Biết nguyên tắc đạo đức khi giám sát học sinh"],
 body:`
-<h2>Câu hỏi nào, phương pháp nấy</h2>
+<h2>Phương pháp: thiết kế, chế tạo và thử nghiệm</h2>
+<ol>
+<li><b>Phân tích yêu cầu:</b> giáo viên cần gì, học sinh cần gì, đề thi có những dạng câu nào.</li>
+<li><b>Thiết kế:</b> vẽ luồng xử lý và các thành phần của hệ thống.</li>
+<li><b>Xây dựng nguyên mẫu:</b> làm phiên bản chạy được đầu tiên.</li>
+<li><b>Thử nghiệm và đánh giá:</b> đo bằng số liệu theo ba câu hỏi nghiên cứu.</li>
+</ol>
+<h3>Luồng xử lý của giải pháp</h3>
 <div class="tbl"><table>
-<tr><th>Phương pháp</th><th>Dùng khi</th><th>Ví dụ</th></tr>
-<tr><td>Thực nghiệm</td><td>Muốn biết A có <i>gây ra</i> B không</td><td>Chia 2 nhóm, một nhóm dùng ứng dụng</td></tr>
-<tr><td>Khảo sát (phiếu hỏi)</td><td>Muốn biết <i>bao nhiêu, mức độ</i> trên nhiều người</td><td>Hỏi 120 học sinh về thói quen làm bài</td></tr>
-<tr><td>Phỏng vấn</td><td>Muốn hiểu <i>vì sao</i>, cảm nhận sâu</td><td>Hỏi 6 bạn vì sao hay quên nộp bài</td></tr>
-<tr><td>Quan sát</td><td>Muốn ghi nhận hành vi thật</td><td>Đếm số bạn dùng điện thoại giờ ra chơi</td></tr>
-<tr><td>Thiết kế, chế tạo</td><td>Tạo sản phẩm rồi đánh giá</td><td>Viết ứng dụng rồi cho người dùng thử</td></tr>
+<tr><th>Bước</th><th>Hệ thống làm gì</th></tr>
+<tr><td>1. Đọc file</td><td>Giải nén file .docx, đọc nội dung XML và danh sách hình ảnh</td></tr>
+<tr><td>2. Tách câu hỏi</td><td>Nhận biết "Câu 1.", "Câu 2."… và các phương án A, B, C, D</td></tr>
+<tr><td>3. Xác định đáp án</td><td>Đọc định dạng đánh dấu đáp án đúng (ví dụ gạch chân hoặc tô màu)</td></tr>
+<tr><td>4. Gắn hình ảnh</td><td>Gắn mỗi hình, công thức vào đúng câu chứa nó</td></tr>
+<tr><td>5. Kiểm tra lỗi</td><td>Đánh dấu câu thiếu phương án, thiếu đáp án, nhắc đến hình nhưng không có hình</td></tr>
+<tr><td>6. Lưu ngân hàng câu hỏi</td><td>Giáo viên duyệt lại các câu bị đánh dấu rồi lưu</td></tr>
+<tr><td>7. Làm bài và giám sát</td><td>Ghi nhận rời trang, sao chép, dán, thoát toàn màn hình; cảnh báo theo mức; ghi nhật ký cho giáo viên</td></tr>
 </table></div>
-<h3>Mẫu nghiên cứu</h3>
-<p>Em không thể hỏi mọi học sinh Việt Nam. Em chọn một <b>mẫu</b>, tức một nhóm nhỏ đại diện. Mẫu càng lớn và chọn càng ngẫu nhiên, kết luận càng đáng tin. Với đề tài học sinh, mỗi nhóm nên có <mark>ít nhất khoảng 30 người</mark> nếu có thể; nếu ít hơn, hãy nói rõ đây là hạn chế.</p>
-<h3>Thiết kế phiếu khảo sát</h3>
+<h3>Bộ dữ liệu kiểm thử</h3>
 <ul>
-<li>Mỗi câu chỉ hỏi một ý. Tránh: "Em thấy ứng dụng nhanh và đẹp không?"</li>
-<li>Không hỏi dẫn dắt. Tránh: "Em có đồng ý ứng dụng rất hữu ích không?"</li>
-<li>Dùng thang 1–5 (thang Likert) để đo mức độ.</li>
-<li>Cho 2–3 bạn làm thử trước để phát hiện câu khó hiểu.</li>
+<li><b>Cho RQ1:</b> khoảng 30 đề Word của ít nhất 3 môn, có hình vẽ, bảng và công thức. Dùng đề công khai (đề minh họa, đề tham khảo) hoặc đề được thầy cô cho phép.</li>
+<li><b>Dữ liệu chuẩn:</b> với mỗi đề, một người kiểm tra thủ công số câu, phương án, đáp án và hình ảnh. Đây là <mark>"đáp án" để chấm kết quả của hệ thống</mark>.</li>
+<li><b>Cho RQ2:</b> khoảng 20 học sinh tình nguyện làm bài thử theo một kịch bản gồm hành động vi phạm và hành động bình thường.</li>
+<li><b>Cho RQ3:</b> 3–5 giáo viên đưa cùng một đề lên hệ thống bằng hai cách, em bấm giờ.</li>
 </ul>
 <h3>Đạo đức nghiên cứu</h3>
 <ul>
-<li><b>Tự nguyện:</b> người tham gia được giải thích và đồng ý; với học sinh dưới 18 tuổi cần cả sự đồng ý của phụ huynh hoặc giáo viên.</li>
-<li><b>Bảo mật:</b> không công bố tên; dùng mã số như HS01, HS02.</li>
-<li><b>Không gây hại:</b> không để nhóm nào bị thiệt, ví dụ sau nghiên cứu cho nhóm đối chứng dùng ứng dụng.</li>
-<li><b>Trung thực:</b> không sửa, không bịa số liệu.</li>
+<li><b>Thông báo trước:</b> học sinh biết rõ hệ thống ghi nhận những hành vi nào.</li>
+<li><b>Tự nguyện:</b> có phiếu đồng ý của học sinh và phụ huynh.</li>
+<li><b>Thu thập tối thiểu:</b> chỉ lưu loại sự kiện và thời điểm. Không ghi hình, ghi âm nếu không thật sự cần.</li>
+<li><b>Không xử lý oan:</b> cảnh báo của hệ thống chỉ là gợi ý; giáo viên xem nhật ký trước khi kết luận.</li>
+<li><b>Bản quyền đề thi:</b> chỉ dùng đề được phép sử dụng.</li>
 </ul>`,
-caseText:`Phương pháp: thực nghiệm có đối chứng. 60 học sinh hai lớp 10, bốc thăm chia thành 2 nhóm 30 bạn. Trong 4 tuần, nhóm thực nghiệm dùng ứng dụng, nhóm đối chứng học như bình thường. Giáo viên ghi lại việc nộp bài. Có phiếu đồng ý của phụ huynh. Sau nghiên cứu, nhóm đối chứng cũng được dùng ứng dụng.`,
+caseText:`Sản phẩm của bước này: kế hoạch nghiên cứu một trang, gồm câu hỏi, giả thuyết, bộ dữ liệu kiểm thử, cách đo và cam kết đạo đức. Điền kế hoạch ở công cụ bên dưới rồi nộp cho thầy cô.`,
 tool:"plan",
 quiz:[
-{q:"Em muốn biết vì sao học sinh ngại hỏi bài thầy cô. Nên dùng phương pháp nào?",o:["Thực nghiệm","Phỏng vấn","Quan sát","Đo đạc"],a:1,e:"Câu hỏi \"vì sao\" cần hiểu suy nghĩ và cảm nhận của người tham gia, nên phỏng vấn là phù hợp nhất."},
-{q:"Câu hỏi khảo sát nào được viết đúng cách?",o:["Ứng dụng có tuyệt vời không?","Ứng dụng có nhanh và đẹp không?","Ứng dụng dễ dùng ở mức nào? (1 = rất khó, 5 = rất dễ)","Em không thấy ứng dụng khó dùng, phải không?"],a:2,e:"Câu C hỏi một ý và có thang đo rõ. Câu A dẫn dắt, câu B hỏi hai ý cùng lúc, câu D dùng phủ định gây khó hiểu."}
+{q:"Để chấm độ chính xác trích xuất, em cần chuẩn bị gì trước?",o:["Bộ đề Word kèm kết quả kiểm tra thủ công (dữ liệu chuẩn)","Logo cho hệ thống","Danh sách bạn bè","Máy in màu"],a:0,e:"Không có dữ liệu chuẩn thì em không biết hệ thống trích đúng hay sai."},
+{q:"Hệ thống ghi nhận khi học sinh rời trang làm bài. Việc nào bắt buộc phải làm?",o:["Không cần báo cho học sinh","Thông báo trước, xin đồng ý và chỉ lưu dữ liệu cần thiết","Công khai nhật ký vi phạm lên mạng","Lưu dữ liệu mãi mãi"],a:1,e:"Nghiên cứu với con người phải minh bạch, tự nguyện và chỉ thu thập dữ liệu tối thiểu."}
 ]},
-{id:"bai-5",t:"Thu thập dữ liệu",d:"Ghi chép cẩn thận, trung thực, có hệ thống",
-goals:["Lập bảng ghi số liệu trước khi bắt đầu","Giữ nhật ký nghiên cứu","Biết xử lý số liệu bất thường một cách trung thực"],
+{id:"bai-5",t:"Thu thập dữ liệu",d:"Chạy thử giải pháp, ghi kết quả trung thực và có hệ thống",
+goals:["Thử trích xuất một đề mẫu và ghi lại lỗi","Thử cơ chế giám sát và ghi nhật ký sự kiện","Lập bảng số liệu và nhật ký nghiên cứu"],
 body:`
-<h2>Chuẩn bị bảng số liệu trước</h2>
-<p>Đừng đợi đến lúc làm mới nghĩ sẽ ghi gì. Lập bảng trên Google Sheets hoặc Excel từ trước, <mark>mỗi dòng là một lần đo, mỗi cột là một thông tin</mark>.</p>
+<h2>Hai bộ số liệu cần thu thập</h2>
+<h3>1. Kết quả trích xuất (cho RQ1)</h3>
 <div class="tbl"><table>
-<tr><th>Mã HS</th><th>Nhóm</th><th>Tuần</th><th>Số bài được giao</th><th>Số bài nộp đúng hạn</th><th>Ghi chú</th></tr>
-<tr><td>HS01</td><td>Thực nghiệm</td><td>1</td><td>5</td><td>5</td><td></td></tr>
-<tr><td>HS02</td><td>Đối chứng</td><td>1</td><td>5</td><td>3</td><td>Nghỉ ốm 1 ngày</td></tr>
-<tr><td>HS03</td><td>Thực nghiệm</td><td>1</td><td>5</td><td>4</td><td></td></tr>
+<tr><th>Mã đề</th><th>Môn</th><th>Số câu (chuẩn)</th><th>Số hình (chuẩn)</th><th>Câu trích đúng</th><th>Hình gắn đúng</th><th>Ghi chú lỗi</th></tr>
+<tr><td>T01</td><td>Toán</td><td>22</td><td>6</td><td>21</td><td>6</td><td>Câu 15: công thức bị mất</td></tr>
+<tr><td>L01</td><td>Vật lí</td><td>28</td><td>9</td><td>28</td><td>8</td><td>Hình câu 7 gắn sang câu 8</td></tr>
+<tr><td>S01</td><td>Sinh học</td><td>28</td><td>4</td><td>28</td><td>4</td><td></td></tr>
 </table></div>
-<h3>Nhật ký nghiên cứu</h3>
-<p>Mỗi buổi làm, ghi lại: ngày giờ, việc đã làm, điều bất thường, ý tưởng mới. Nhà khoa học thật cũng làm vậy. Nhật ký là bằng chứng em đã thực sự làm nghiên cứu, và giúp em viết báo cáo nhanh hơn nhiều.</p>
-<h3>Những lỗi hay gặp</h3>
+<p>Phân loại mỗi lỗi vào một nhóm: <b>tách câu sai</b>, <b>thiếu phương án</b>, <b>sai đáp án</b>, <b>mất hình</b>, <b>gắn hình nhầm câu</b>, <b>lỗi công thức</b>. Ở bài 6, em sẽ vẽ biểu đồ theo các nhóm này.</p>
+<h3>2. Nhật ký sự kiện giám sát (cho RQ2)</h3>
+<div class="tbl"><table>
+<tr><th>Thời điểm</th><th>Mã HS</th><th>Hành động thật (theo kịch bản)</th><th>Hệ thống ghi nhận</th><th>Kết luận</th></tr>
+<tr><td>09:02:15</td><td>HS07</td><td>Chuyển sang tab khác</td><td>Rời trang · Nhắc nhở</td><td>Phát hiện đúng</td></tr>
+<tr><td>09:04:40</td><td>HS07</td><td>Bấm vào thanh thông báo của máy</td><td>Mất tiêu điểm · Cảnh báo</td><td>Báo nhầm</td></tr>
+<tr><td>09:06:02</td><td>HS07</td><td>Chụp màn hình bằng điện thoại</td><td>Không ghi nhận</td><td>Bỏ sót</td></tr>
+</table></div>
+<p>Cột "Kết luận" chỉ điền được vì em <mark>biết trước hành động thật</mark> theo kịch bản. Đây là lý do cần kịch bản thử nghiệm.</p>
+<h3>Trung thực với số liệu</h3>
 <ul>
-<li><b>Đo không nhất quán:</b> tuần này đếm bài nộp trước 7 giờ, tuần sau đếm trước 9 giờ.</li>
-<li><b>Bỏ số liệu "xấu":</b> bỏ đi kết quả không khớp với giả thuyết là <b>không trung thực</b>. Nếu loại bỏ, phải có lý do rõ ràng và ghi vào báo cáo.</li>
-<li><b>Chỉ ghi nhớ trong đầu:</b> ghi ngay, ghi đầy đủ.</li>
-<li><b>Không sao lưu:</b> lưu bản sao ở ít nhất hai nơi.</li>
-</ul>
-<h3>Lặp lại</h3>
-<p>Một lần đo có thể ngẫu nhiên đúng. Đo nhiều lần, nhiều người, nhiều tuần giúp kết quả đáng tin hơn.</p>`,
-caseText:`Mỗi thứ Sáu, giáo viên bộ môn gửi danh sách bài đã nộp. Em nhập vào Google Sheets theo mẫu ở trên và ghi nhật ký. Tuần 3 có 2 bạn nhóm thực nghiệm bị hỏng điện thoại: em ghi lại và vẫn giữ số liệu của các bạn ấy, rồi nêu điều này trong báo cáo.`,
-tool:"journal",
+<li>Không bỏ các đề hệ thống trích sai nhiều. Đó là dữ liệu quan trọng nhất để cải tiến.</li>
+<li>Không sửa tay kết quả rồi ghi là "trích đúng".</li>
+<li>Ghi rõ phiên bản giải pháp đã dùng cho mỗi lần chạy, vì em sẽ còn sửa code.</li>
+<li>Ghi nhật ký nghiên cứu sau mỗi buổi làm và sao lưu số liệu ở hai nơi.</li>
+</ul>`,
+caseText:`Sản phẩm của bước này: bảng kết quả trích xuất của bộ đề kiểm thử, nhật ký sự kiện giám sát và nhật ký nghiên cứu. Ba phần thực hành bên dưới giúp em thử từng việc.`,
+tool:"lab",
 quiz:[
-{q:"Kết quả tuần 2 trái với giả thuyết. Em nên làm gì?",o:["Xóa số liệu tuần 2","Sửa số liệu cho khớp giả thuyết","Giữ nguyên, ghi lại và tìm nguyên nhân","Đo lại đến khi khớp giả thuyết"],a:2,e:"Kết quả trái giả thuyết vẫn là kết quả khoa học. Xóa hoặc sửa số liệu là gian lận."},
-{q:"Bảng số liệu nên được sắp xếp thế nào?",o:["Mỗi dòng là một lần đo, mỗi cột là một thông tin","Ghi tất cả vào một ô","Mỗi học sinh một file riêng","Ghi vào vở, khi nào cần thì nhập"],a:0,e:"Cách sắp xếp này giúp tính toán và vẽ biểu đồ dễ dàng ở bài 6."}
+{q:"Giải pháp trích sai 3 câu có công thức toán. Em nên làm gì?",o:["Bỏ 3 câu đó khỏi kết quả","Ghi lại 3 lỗi, phân loại nguyên nhân, giữ trong số liệu","Sửa tay rồi ghi là trích đúng","Chạy lại đến khi đúng thì mới ghi"],a:1,e:"Lỗi là số liệu thật. Ghi lại và phân loại giúp em tìm cách cải tiến và báo cáo trung thực."},
+{q:"Học sinh chuyển sang tab khác. Sự kiện nào của trình duyệt giúp phát hiện điều này?",o:["visibilitychange","load","resize","scroll"],a:0,e:"Sự kiện visibilitychange (Page Visibility API) báo cho trang biết khi trang bị ẩn, ví dụ khi người dùng chuyển tab."}
 ]},
-{id:"bai-6",t:"Phân tích dữ liệu",d:"Biến những con số thành câu trả lời",
-goals:["Tính và hiểu trung bình, trung vị, độ lệch chuẩn","Chọn biểu đồ phù hợp","Phân biệt tương quan và nhân quả"],
+{id:"bai-6",t:"Phân tích dữ liệu",d:"Tính các chỉ số đánh giá và trả lời ba câu hỏi nghiên cứu",
+goals:["Tính tỉ lệ trích xuất đúng và phân loại lỗi","Tính độ chính xác, độ nhạy và F1 của cơ chế phát hiện vi phạm","So sánh thời gian giữa hai cách đưa đề lên hệ thống"],
 body:`
-<h2>Các con số mô tả cơ bản</h2>
+<h2>RQ1: Tỉ lệ trích xuất đúng</h2>
+<p class="out">Tỉ lệ trích xuất đúng = Số câu trích đúng hoàn toàn ÷ Tổng số câu trong dữ liệu chuẩn</p>
+<p>Một câu chỉ được tính là "đúng hoàn toàn" khi đúng cả nội dung, đủ 4 phương án, đúng đáp án và đủ hình. Ngoài tỉ lệ chung, hãy tính riêng cho <b>câu có hình</b> và <b>câu có công thức</b>, vì đây là phần khó nhất. Vẽ <b>biểu đồ cột</b> số lỗi theo từng nhóm lỗi.</p>
+<h2>RQ2: Đánh giá cơ chế phát hiện vi phạm</h2>
+<p>Đối chiếu nhật ký hệ thống với hành động thật, em có bốn loại kết quả:</p>
 <div class="tbl"><table>
-<tr><th>Đại lượng</th><th>Ý nghĩa</th><th>Khi nào dùng</th></tr>
-<tr><td>Trung bình</td><td>Tổng chia số lượng</td><td>Số liệu không có giá trị quá lệch</td></tr>
-<tr><td>Trung vị</td><td>Giá trị ở giữa khi xếp theo thứ tự</td><td>Có vài giá trị rất lớn hoặc rất nhỏ</td></tr>
-<tr><td>Độ lệch chuẩn</td><td>Số liệu phân tán quanh trung bình nhiều hay ít</td><td>Luôn báo cáo kèm trung bình</td></tr>
+<tr><th></th><th>Hệ thống có cảnh báo</th><th>Hệ thống không cảnh báo</th></tr>
+<tr><td><b>Có vi phạm thật</b></td><td>Phát hiện đúng (TP)</td><td>Bỏ sót (FN)</td></tr>
+<tr><td><b>Không vi phạm</b></td><td>Báo nhầm (FP)</td><td>Bỏ qua đúng (TN)</td></tr>
 </table></div>
-<p>Trong Google Sheets: <code>=AVERAGE(B2:B31)</code>, <code>=MEDIAN(B2:B31)</code>, <code>=STDEV(B2:B31)</code>.</p>
-<h3>Chọn biểu đồ</h3>
 <ul>
-<li><b>Cột:</b> so sánh các nhóm (nhóm thực nghiệm và nhóm đối chứng).</li>
-<li><b>Đường:</b> thay đổi theo thời gian (tuần 1 đến tuần 4).</li>
-<li><b>Tròn:</b> tỉ lệ các phần của một tổng; chỉ nên dùng khi có ít phần.</li>
-<li><b>Điểm (phân tán):</b> mối quan hệ giữa hai đại lượng.</li>
+<li><b>Độ chính xác (Precision)</b> = TP ÷ (TP + FP): trong các lần cảnh báo, bao nhiêu phần trăm là đúng.</li>
+<li><b>Độ nhạy (Recall)</b> = TP ÷ (TP + FN): trong các lần vi phạm thật, hệ thống bắt được bao nhiêu phần trăm.</li>
+<li><b>F1</b> = 2 × Precision × Recall ÷ (Precision + Recall): một con số cân bằng cả hai.</li>
 </ul>
-<p>Biểu đồ nào cũng phải có tên, tên trục, đơn vị và số lượng mẫu (n).</p>
-<h3>Tương quan không phải là nhân quả</h3>
-<p>Ví dụ: ở các thành phố bán nhiều kem hơn thì có nhiều vụ đuối nước hơn. Kem không gây đuối nước. Cả hai cùng tăng vì <mark>trời nóng</mark>. Chỉ thực nghiệm có đối chứng và chia nhóm ngẫu nhiên mới giúp kết luận gần với nhân quả.</p>
-<h3>Chênh lệch có đủ lớn không?</h3>
-<p>Hai nhóm luôn khác nhau một chút do ngẫu nhiên. Nếu chênh lệch nhỏ hơn nhiều so với độ lệch chuẩn, hãy thận trọng khi kết luận. Ở bậc cao hơn, em sẽ học các phép kiểm định thống kê như t-test để trả lời câu hỏi này chính xác.</p>`,
-caseText:`Sau 4 tuần, nhóm thực nghiệm nộp đúng hạn trung bình 88% số bài, nhóm đối chứng 71%. Dùng công cụ bên dưới với số liệu mẫu để xem hai nhóm khác nhau thế nào.`,
+<p>Với hệ thống cảnh báo học sinh, <mark>báo nhầm rất quan trọng</mark>: một lần báo nhầm có thể khiến một em bị nghi oan.</p>
+<h2>RQ3: So sánh thời gian</h2>
+<p>Tính trung bình, trung vị, độ lệch chuẩn thời gian của hai cách, rồi tính phần trăm thời gian giảm được. Trong Google Sheets: <code>=AVERAGE()</code>, <code>=MEDIAN()</code>, <code>=STDEV()</code>.</p>
+<h3>Kết quả đúng đến đâu?</h3>
+<p>Kết quả chỉ đúng trong phạm vi dữ liệu em đã thử. Nếu bộ đề chỉ gồm đề soạn theo mẫu chuẩn, em không được kết luận giải pháp chạy tốt với <i>mọi</i> file Word.</p>`,
+caseText:`Sản phẩm của bước này: ba con số trả lời ba câu hỏi nghiên cứu (tỉ lệ trích đúng, Precision/Recall/F1, phần trăm thời gian giảm), kèm bảng và biểu đồ. Dùng công cụ bên dưới với số liệu mẫu, sau đó thay bằng số liệu của em.`,
 tool:"stats",
 quiz:[
-{q:"Điểm của 5 bạn là 6, 7, 7, 8, 10. Trung vị là bao nhiêu?",o:["7","7,6","8","10"],a:0,e:"Xếp theo thứ tự rồi lấy giá trị ở giữa (vị trí thứ 3) là 7. Còn 7,6 là trung bình."},
-{q:"Kết quả cho thấy học sinh ngủ nhiều hơn thì điểm cao hơn. Kết luận nào đúng?",o:["Ngủ nhiều làm điểm cao hơn","Hai điều có tương quan, chưa đủ để kết luận cái này gây ra cái kia","Điểm cao làm học sinh ngủ nhiều hơn","Hai điều không liên quan"],a:1,e:"Đây là tương quan. Có thể có yếu tố thứ ba, ví dụ bạn ít áp lực thì vừa ngủ ngon vừa học tốt."}
+{q:"Hệ thống cảnh báo 100 lần; 92 lần đúng là vi phạm, 8 lần báo nhầm. Precision bằng bao nhiêu?",o:["92%","8%","100%","84%"],a:0,e:"Precision = 92 ÷ (92 + 8) = 92%."},
+{q:"Vì sao phải quan tâm đến số lần báo nhầm?",o:["Báo nhầm có thể khiến học sinh bị nghi oan","Báo nhầm làm hệ thống chạy nhanh hơn","Báo nhầm không ảnh hưởng gì","Báo nhầm giúp học sinh được điểm cao"],a:0,e:"Hệ thống cảnh báo vi phạm phải công bằng. Báo nhầm nhiều làm học sinh và giáo viên mất niềm tin vào hệ thống."}
 ]},
-{id:"bai-7",t:"Viết báo cáo khoa học",d:"Cấu trúc IMRaD và cách viết rõ ràng, trung thực",
-goals:["Nắm cấu trúc của một báo cáo khoa học","Viết tóm tắt trong khoảng 250 từ","Biết trình bày hạn chế của nghiên cứu"],
+{id:"bai-7",t:"Viết báo cáo khoa học",d:"Trình bày đề tài theo cấu trúc chuẩn, rõ ràng và trung thực",
+goals:["Nắm cấu trúc báo cáo của một đề tài thiết kế, chế tạo","Viết tóm tắt đề tài trong khoảng 250 từ","Trình bày hạn chế một cách thẳng thắn"],
 body:`
-<h2>Cấu trúc IMRaD</h2>
-<p>Hầu hết bài báo khoa học trên thế giới theo cấu trúc này. Báo cáo dự thi khoa học kỹ thuật cũng tương tự.</p>
+<h2>Cấu trúc báo cáo</h2>
 <div class="tbl"><table>
-<tr><th>Phần</th><th>Trả lời câu hỏi</th><th>Gợi ý độ dài</th></tr>
-<tr><td>Tóm tắt (Abstract)</td><td>Toàn bộ nghiên cứu trong một đoạn</td><td>150–250 từ</td></tr>
-<tr><td>Đặt vấn đề (Introduction)</td><td>Vì sao nghiên cứu? Người khác đã biết gì? Câu hỏi và giả thuyết là gì?</td><td>1–2 trang</td></tr>
-<tr><td>Phương pháp (Methods)</td><td>Em đã làm như thế nào? (đủ chi tiết để người khác làm lại được)</td><td>1–2 trang</td></tr>
-<tr><td>Kết quả (Results)</td><td>Em tìm thấy gì? (số liệu, bảng, biểu đồ; chưa bình luận)</td><td>1–3 trang</td></tr>
-<tr><td>Thảo luận (Discussion)</td><td>Kết quả có ý nghĩa gì? So với nghiên cứu khác ra sao? Hạn chế là gì?</td><td>1–2 trang</td></tr>
-<tr><td>Kết luận và Tài liệu tham khảo</td><td>Trả lời câu hỏi nghiên cứu; hướng phát triển; danh sách nguồn</td><td>0,5 trang</td></tr>
+<tr><th>Phần</th><th>Trong đề tài này</th></tr>
+<tr><td>Tóm tắt</td><td>Vấn đề, giải pháp, cách đánh giá, ba kết quả chính, ý nghĩa</td></tr>
+<tr><td>Đặt vấn đề</td><td>Khó khăn khi đưa đề Word lên hệ thống; vi phạm khi ôn thi trực tuyến; ba câu hỏi nghiên cứu</td></tr>
+<tr><td>Tổng quan</td><td>Cấu trúc file Word, các công cụ, các giải pháp giám sát đã có, khoảng trống</td></tr>
+<tr><td>Phương pháp và thiết kế</td><td>Luồng xử lý, sơ đồ hệ thống, bộ dữ liệu kiểm thử, kịch bản thử nghiệm, cách đo</td></tr>
+<tr><td>Kết quả</td><td>Tỉ lệ trích đúng, bảng lỗi, Precision/Recall/F1, so sánh thời gian (chỉ nêu số liệu)</td></tr>
+<tr><td>Thảo luận</td><td>Vì sao có lỗi, so với giả thuyết, so với nghiên cứu khác, hạn chế</td></tr>
+<tr><td>Kết luận</td><td>Trả lời ba câu hỏi, hướng phát triển, tài liệu tham khảo</td></tr>
 </table></div>
 <h3>Mẫu tóm tắt 5 câu</h3>
 <ol>
-<li>Vấn đề: … là một vấn đề vì …</li>
-<li>Mục tiêu: Nghiên cứu này nhằm …</li>
-<li>Phương pháp: Chúng em đã … với … người trong … tuần.</li>
-<li>Kết quả: Kết quả cho thấy … (có con số).</li>
-<li>Ý nghĩa: Điều này gợi ý rằng …</li>
+<li><b>Vấn đề:</b> Giáo viên mất nhiều thời gian đưa đề thi từ Word lên hệ thống ôn thi trực tuyến, và học sinh dễ vi phạm quy chế khi làm bài trực tuyến.</li>
+<li><b>Mục tiêu:</b> Đề tài xây dựng giải pháp tự động trích xuất đề thi có hình ảnh và cơ chế phát hiện, cảnh báo vi phạm.</li>
+<li><b>Phương pháp:</b> Giải pháp được thử trên … đề Word với … câu hỏi, và với … học sinh tình nguyện theo kịch bản.</li>
+<li><b>Kết quả:</b> Giải pháp trích xuất đúng …%; cơ chế giám sát đạt Precision …%, Recall …%; thời gian đưa đề giảm …%.</li>
+<li><b>Ý nghĩa:</b> Kết quả gợi ý giải pháp có thể hỗ trợ giáo viên và tăng tính trung thực khi ôn thi trực tuyến.</li>
 </ol>
 <h3>Viết như nhà khoa học</h3>
 <ul>
-<li>Câu ngắn, rõ ràng; mỗi đoạn một ý.</li>
-<li>Dùng số liệu thay cho tính từ: "tăng 17 điểm phần trăm" thay cho "tăng rất nhiều".</li>
-<li>Không phóng đại: viết "kết quả gợi ý" thay cho "đã chứng minh".</li>
-<li>Nêu hạn chế một cách thẳng thắn. Hội đồng đánh giá cao điều này.</li>
+<li>Đưa vào báo cáo: sơ đồ luồng xử lý, ảnh chụp giao diện, bảng kết quả.</li>
+<li>Dùng số liệu thay cho tính từ: "giảm 84% thời gian" thay cho "nhanh hơn rất nhiều".</li>
+<li>Không phóng đại: viết "kết quả gợi ý" thay cho "đã chứng minh hoàn toàn".</li>
+<li>Nêu hạn chế: chỉ thử với đề soạn theo mẫu; chưa phát hiện được thiết bị thứ hai như điện thoại.</li>
 </ul>`,
-caseText:`Hạn chế được nêu trong báo cáo mẫu: chỉ có 60 học sinh từ một trường; nghiên cứu kéo dài 4 tuần, chưa biết hiệu quả có duy trì lâu dài không; học sinh biết mình đang được nghiên cứu nên có thể cố gắng hơn bình thường.`,
+caseText:`Sản phẩm của bước này: bản báo cáo hoàn chỉnh. Luyện nhận biết câu nào thuộc phần nào bằng bài tập bên dưới.`,
 tool:"imrad",
 quiz:[
-{q:"Câu dưới đây thuộc phần nào của báo cáo?",ctx:"Nhóm thực nghiệm nộp đúng hạn 88% số bài, nhóm đối chứng 71%.",o:["Đặt vấn đề","Phương pháp","Kết quả","Thảo luận"],a:2,e:"Câu này nêu số liệu tìm được và chưa bình luận, nên thuộc phần Kết quả."},
-{q:"Câu nào viết đúng văn phong khoa học?",o:["Ứng dụng đã chứng minh hiệu quả tuyệt vời.","Sau 4 tuần, tỉ lệ nộp bài đúng hạn tăng 17 điểm phần trăm.","Ai cũng thích ứng dụng.","Ứng dụng rất rất tốt."],a:1,e:"Câu B có số liệu cụ thể và có phạm vi thời gian. Các câu còn lại phóng đại hoặc không đo được."}
+{q:"Câu dưới đây thuộc phần nào của báo cáo?",ctx:"Giải pháp trích xuất đúng 1.152 trên 1.200 câu hỏi (96%).",o:["Đặt vấn đề","Phương pháp","Kết quả","Thảo luận"],a:2,e:"Câu này nêu số liệu đo được và chưa giải thích, nên thuộc phần Kết quả."},
+{q:"Câu nào thuộc phần Thảo luận?",o:["Bộ dữ liệu gồm 30 đề Word.","Phần lớn lỗi xảy ra ở câu có công thức MathType, vì công thức được lưu dưới dạng hình ảnh.","Báo cáo gồm 5 chương.","Hệ thống được viết bằng Python."],a:1,e:"Câu B giải thích nguyên nhân của kết quả. Giải thích và bình luận thuộc phần Thảo luận."}
 ]},
-{id:"bai-8",t:"Trình bày và bảo vệ",d:"Poster, thuyết trình và trả lời câu hỏi của hội đồng",
-goals:["Thiết kế poster dễ đọc từ xa","Thuyết trình đề tài trong 5 phút","Chuẩn bị trả lời các câu hỏi thường gặp"],
+{id:"bai-8",t:"Trình bày và bảo vệ",d:"Poster, thuyết trình kèm demo, và trả lời câu hỏi của hội đồng",
+goals:["Thiết kế poster giới thiệu đề tài","Thuyết trình 5 phút có phần demo sản phẩm","Chuẩn bị trả lời các câu hỏi hội đồng hay hỏi về đề tài"],
 body:`
-<h2>Poster khoa học</h2>
+<h2>Poster đề tài</h2>
 <ul>
-<li>Bố cục 3 cột, đọc từ trái sang phải, từ trên xuống dưới.</li>
-<li>Tên đề tài đọc được từ cách xa 3 mét. Chữ nội dung không nhỏ hơn cỡ 24.</li>
-<li>Nhiều hình và biểu đồ, ít chữ. Mỗi đoạn không quá 50 từ.</li>
-<li>Kết quả chính đặt ở vị trí nổi bật nhất.</li>
-<li>Dùng tối đa 2–3 màu, đủ tương phản.</li>
+<li>Bố cục 3 cột: <b>Vấn đề và câu hỏi</b> → <b>Giải pháp</b> (sơ đồ luồng xử lý, ảnh giao diện) → <b>Kết quả và kết luận</b>.</li>
+<li>Ba con số kết quả (tỉ lệ trích đúng, F1, phần trăm thời gian giảm) đặt to, nổi bật nhất.</li>
+<li>Có một hình "trước và sau": file Word gốc và câu hỏi đã trích xuất trên hệ thống.</li>
+<li>Mỗi đoạn chữ không quá 50 từ; tên đề tài đọc được từ xa 3 mét.</li>
 </ul>
 <h2>Thuyết trình 5 phút</h2>
 <div class="tbl"><table>
 <tr><th>Thời gian</th><th>Nội dung</th></tr>
-<tr><td>0:00–0:45</td><td>Mở đầu bằng vấn đề, một con số hoặc một tình huống quen thuộc</td></tr>
-<tr><td>0:45–1:30</td><td>Câu hỏi nghiên cứu và giả thuyết</td></tr>
-<tr><td>1:30–2:45</td><td>Phương pháp (dùng sơ đồ)</td></tr>
-<tr><td>2:45–4:15</td><td>Kết quả (1–2 biểu đồ quan trọng nhất)</td></tr>
-<tr><td>4:15–5:00</td><td>Kết luận, hạn chế, hướng phát triển</td></tr>
+<tr><td>0:00–0:40</td><td>Vấn đề: một con số về thời gian nhập đề, hoặc một tình huống học sinh mở tab tra cứu</td></tr>
+<tr><td>0:40–1:20</td><td>Ba câu hỏi nghiên cứu và giả thuyết</td></tr>
+<tr><td>1:20–2:20</td><td>Giải pháp: sơ đồ luồng xử lý</td></tr>
+<tr><td>2:20–3:20</td><td>Demo: tải một đề Word lên, xem câu hỏi tách ra; thử rời trang để thấy cảnh báo</td></tr>
+<tr><td>3:20–4:20</td><td>Kết quả: ba con số và một biểu đồ</td></tr>
+<tr><td>4:20–5:00</td><td>Kết luận, hạn chế, hướng phát triển</td></tr>
 </table></div>
-<p>Luyện tập trước gương, trước bạn bè và bấm giờ. Nói với hội đồng như đang kể một câu chuyện, đừng đọc thuộc lòng.</p>
+<p>Luôn chuẩn bị <mark>video demo dự phòng</mark> phòng khi mạng hoặc máy tính gặp sự cố.</p>
 <h3>Khi không biết câu trả lời</h3>
-<p>Hãy thành thật: "Em chưa tìm hiểu điều này, đây là một hướng rất hay để em nghiên cứu tiếp." Bịa câu trả lời là điều hội đồng dễ nhận ra nhất.</p>`,
-caseText:`Câu mở đầu thuyết trình của đề tài mẫu: "Mỗi tuần, lớp em có khoảng 10 bạn quên nộp bài tập. Chúng em tự hỏi: một chiếc điện thoại, thứ thường bị coi là gây xao nhãng, có thể giúp các bạn nhớ bài không?"`,
+<p>Hãy thành thật: "Em chưa thử trường hợp này, đây là một hướng để em nghiên cứu tiếp." Hội đồng đánh giá cao sự trung thực hơn một câu trả lời đoán mò.</p>`,
+caseText:`Sản phẩm của bước này: poster, bài thuyết trình 5 phút có demo, và câu trả lời đã chuẩn bị cho các câu hỏi bên dưới.`,
 tool:"defense",
 quiz:[
-{q:"Trên poster, phần nào cần nổi bật nhất?",o:["Tài liệu tham khảo","Kết quả chính","Tên người hướng dẫn","Lời cảm ơn"],a:1,e:"Người xem thường chỉ dừng lại vài giây. Kết quả chính là điều họ cần thấy ngay."},
-{q:"Hội đồng hỏi một điều em chưa tìm hiểu. Em nên trả lời thế nào?",o:["Đoán một câu trả lời","Im lặng","Nói thật là chưa tìm hiểu, và nêu đó là hướng nghiên cứu tiếp","Chuyển sang chủ đề khác"],a:2,e:"Trung thực là phẩm chất quan trọng nhất của nhà nghiên cứu. Hội đồng đánh giá cao câu trả lời này."}
+{q:"Trên poster đề tài, phần nào cần nổi bật nhất?",o:["Toàn bộ mã nguồn","Ba con số kết quả chính","Danh sách thư viện đã dùng","Lời cảm ơn"],a:1,e:"Người xem chỉ dừng lại vài giây. Ba con số kết quả cho họ biết ngay giải pháp tốt đến đâu."},
+{q:"Hội đồng hỏi: hệ thống có phát hiện học sinh dùng điện thoại thứ hai không? Em trả lời thế nào?",o:["Có, hệ thống phát hiện được mọi hành vi","Chưa, vì trình duyệt không thấy thiết bị khác; đây là hạn chế và là hướng phát triển","Im lặng","Chuyển sang chủ đề khác"],a:1,e:"Trình duyệt chỉ biết những gì xảy ra trên chính máy đó. Thừa nhận hạn chế một cách rõ ràng là câu trả lời đúng."}
 ]}
 ];
-const PH=[{k:"Chuẩn bị",r:"Bài 1–3",d:"Đặt câu hỏi, đọc tài liệu, nêu giả thuyết"},{k:"Thực hiện",r:"Bài 4–6",d:"Thiết kế, thu thập và phân tích dữ liệu"},{k:"Công bố",r:"Bài 7–8",d:"Viết báo cáo, trình bày, bảo vệ"}];
+const PH=[{k:"Chuẩn bị",r:"Bài 1–3",d:"Hiểu đề tài, đọc tài liệu, nêu giả thuyết"},{k:"Thực hiện",r:"Bài 4–6",d:"Thiết kế giải pháp, thử nghiệm và phân tích số liệu"},{k:"Công bố",r:"Bài 7–8",d:"Viết báo cáo, trình bày, bảo vệ"}];
 const ph=i=>i<3?0:i<6?1:2;
 const LOAI={"cau-hoi":"Câu hỏi nghiên cứu","gia-thuyet":"Giả thuyết","ke-hoach":"Kế hoạch nghiên cứu","nhat-ky":"Nhật ký nghiên cứu"};
 
@@ -508,25 +563,99 @@ function copyText(text,btn,fallbackEl){
   try{navigator.clipboard.writeText(text).then(done,fb)}catch(e){fb()}
 }
 
+/* ---------- trích xuất đề (bản thử) ---------- */
+const SAMPLE_EXAM=`PHẦN I. Câu trắc nghiệm nhiều phương án lựa chọn
+Câu 1. Hàm số y = x³ − 3x đạt cực đại tại điểm nào?
+A. x = 1
+*B. x = −1
+C. x = 0
+D. x = 3
+Câu 2. Cho hình chóp S.ABCD có đáy là hình vuông cạnh a, SA vuông góc với đáy và SA = a (như hình bên). Thể tích khối chóp bằng bao nhiêu?
+[HÌNH: hinh_chop_SABCD.png]
+A. a³    *B. a³/3    C. a³/6    D. 3a³
+Câu 3. Trong không gian Oxyz, vectơ nào là vectơ chỉ phương của trục Ox?
+A. (0; 1; 0)
+B. (1; 0; 0)
+C. (0; 0; 1)
+D. (1; 1; 0)
+Câu 5. Đồ thị hàm số nào có dạng như hình vẽ dưới đây?
+A. y = x² − 2x
+*B. y = −x² + 2x
+C. y = x³ − 3x`;
+function parseExam(text){
+  const reQ=/^Câu\s+(\d+)\s*[.:)]\s*(.*)$/i,reO=/^(\*?)\s*([A-D])\s*[.)]\s*(.*)$/,reI=/\[\s*HÌNH\s*:\s*([^\]]+?)\s*\]/gi;
+  const qs=[];let cur=null;
+  text.replace(/\r/g,"").split("\n").forEach(raw=>{
+    let line=raw.trim();if(!line)return;
+    const imgs=[];line=line.replace(reI,(_,f)=>{imgs.push(f);return ""}).trim();
+    const m=line.match(reQ);
+    if(m){cur={so:+m[1],noiDung:m[2],pa:[],dapAn:[],hinh:[]};qs.push(cur)}
+    if(cur)cur.hinh.push(...imgs);
+    if(m||!cur||!line)return;
+    if(reO.test(line)){
+      line.split(/\s+(?=\*?\s*[A-D]\s*[.)]\s)/).forEach(part=>{const o=part.trim().match(reO);if(!o)return;
+        cur.pa.push({k:o[2].toUpperCase(),t:o[3]});if(o[1])cur.dapAn.push(o[2].toUpperCase())});
+      return;
+    }
+    if(cur.pa.length)cur.pa[cur.pa.length-1].t+=" "+line;else cur.noiDung+=" "+line;
+  });
+  qs.forEach((q,i)=>{const w=[];
+    if(i&&q.so!==qs[i-1].so+1)w.push(`Số thứ tự không liên tục (sau câu ${qs[i-1].so} là câu ${q.so})`);
+    if(q.pa.length!==4)w.push(`Có ${q.pa.length} phương án, cần đủ 4`);
+    const keys=q.pa.map(p=>p.k);if(new Set(keys).size!==keys.length)w.push("Có phương án bị trùng chữ cái");
+    if(!q.dapAn.length)w.push("Chưa xác định được đáp án đúng");
+    if(q.dapAn.length>1)w.push("Có nhiều hơn một đáp án được đánh dấu");
+    if(/(như\s+)?hình\s+(bên|vẽ|dưới)|như hình/i.test(q.noiDung)&&!q.hinh.length)w.push("Câu nhắc đến hình nhưng không tìm thấy hình ảnh");
+    q.canhBao=w});
+  return qs;
+}
+/* ---------- giám sát vi phạm (bản thử) ---------- */
+const MON={on:false,count:0,last:0,log:[],fs:false};
+const LV=[["lv0","Đang làm bài. Hệ thống đang giám sát."],["lv1","Nhắc nhở: Em vừa rời khỏi bài thi. Hãy quay lại làm bài."],["lv2","Cảnh báo lần 2: Hành vi đã được ghi lại để giáo viên xem."],["lv3","Vi phạm lần 3: Bài làm bị dừng (mô phỏng). Giáo viên sẽ xem nhật ký trước khi quyết định."]];
+function monEvent(type){
+  if(!MON.on)return;
+  const now=Date.now(),t=new Date(),p=n=>String(n).padStart(2,"0");
+  const merged=now-MON.last<1500;
+  if(!merged){MON.count++;MON.last=now}
+  const lv=Math.min(MON.count,3);
+  MON.log.push({luc:`${p(t.getHours())}:${p(t.getMinutes())}:${p(t.getSeconds())}`,type,merged,lv});
+  if(lv>=3&&!merged){MON.on=false;try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+  renderMon();
+}
+function renderMon(){
+  const bar=$("mBar"),tb=$("mLog");if(!bar||!tb)return;
+  const lv=MON.on?Math.min(MON.count,3):(MON.count>=3?3:-1);
+  if(lv<0){bar.className="alertbar";bar.textContent=MON.log.length?"Đã kết thúc bài làm thử.":"Chưa bắt đầu. Bấm \"Bắt đầu làm bài thử\".";}
+  else{bar.className="alertbar "+LV[lv][0];bar.textContent=LV[lv][1]}
+  $("mStart").hidden=MON.on;$("mStop").hidden=!MON.on;
+  tb.innerHTML=`<tr><th>Thời điểm</th><th>Sự kiện trình duyệt ghi nhận</th><th>Xử lý</th></tr>`+(MON.log.length?MON.log.map(r=>`<tr><td>${r.luc}</td><td>${r.type}</td><td>${r.merged?"Gộp với sự kiện ngay trước, không tính thêm":"Lần "+Math.min(r.lv,3)+": "+["","Nhắc nhở","Cảnh báo","Dừng bài (mô phỏng)"][Math.min(r.lv,3)]}</td></tr>`).join(""):`<tr><td colspan="3" class="muted">Chưa có sự kiện nào.</td></tr>`);
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)monEvent("Trang bị ẩn: chuyển tab hoặc thu nhỏ cửa sổ")});
+window.addEventListener("blur",()=>monEvent("Trang mất tiêu điểm: bấm sang cửa sổ hoặc ứng dụng khác"));
+document.addEventListener("copy",()=>monEvent("Sao chép nội dung"));
+document.addEventListener("paste",()=>monEvent("Dán nội dung"));
+document.addEventListener("contextmenu",()=>monEvent("Mở menu chuột phải"));
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&MON.fs&&MON.on){MON.fs=false;monEvent("Thoát chế độ toàn màn hình")}else if(document.fullscreenElement)MON.fs=true});
+
 /* ---------- công cụ thực hành ---------- */
 const TOOLS={
 question:{html:`
-<p>Viết câu hỏi nghiên cứu của em, sau đó đánh dấu những tiêu chí câu hỏi đã đạt.</p>
-<label class="f" for="qIn">Câu hỏi nghiên cứu<textarea id="qIn" placeholder="Ví dụ: Học sinh lớp 10A dùng điện thoại hơn 2 giờ mỗi tối có điểm Toán thấp hơn không?"></textarea></label>
+<p>Viết một câu hỏi nghiên cứu cho đề tài (ví dụ RQ1, RQ2 hoặc RQ3), sau đó đánh dấu những tiêu chí câu hỏi đã đạt.</p>
+<label class="f" for="qIn">Câu hỏi nghiên cứu<textarea id="qIn" placeholder="Ví dụ: Giải pháp trích xuất đúng bao nhiêu phần trăm câu hỏi, kể cả hình ảnh, từ 30 đề Word môn Toán?"></textarea></label>
 <div style="display:grid;gap:6px">
-${["Cụ thể: nêu rõ đối tượng, nơi chốn, điều cần tìm","Đo được: trả lời bằng số liệu hoặc quan sát","Khả thi: làm được trong vài tuần","Chưa có đáp án sẵn trên mạng hay trong sách","Có ý nghĩa: câu trả lời giúp ích cho ai đó"].map((c,i)=>`<label class="chk"><input type="checkbox" id="qc${i}"><span>${c}</span></label>`).join("")}
+${["Cụ thể: nêu rõ phạm vi (bao nhiêu đề, môn nào, đối tượng nào)","Đo được: trả lời bằng con số (%, số lần, số phút)","Khả thi: làm được trong thời gian của đề tài","Chưa có đáp án sẵn trên mạng hay trong sách","Có ý nghĩa: giúp ích cho giáo viên hoặc học sinh"].map((c,i)=>`<label class="chk"><input type="checkbox" id="qc${i}"><span>${c}</span></label>`).join("")}
 </div>
 <div class="btns"><button class="btn" id="qBtn">Đánh giá câu hỏi</button><button class="btn send" id="qNop">Nộp cho giáo viên</button><span class="sync" id="qMsg"></span></div>
 <div class="out" id="qOut" hidden></div>`,
 init(){
-  const r=S.sp["1-cau-hoi"];if(r)$("qIn").value=String(r.noiDung).split("\n")[0];
+  const r=S.sp["1-cau-hoi"];if(r)$("qIn").value=String(r.noiDung).split("\nTự đánh giá")[0];
   const n=()=>[0,1,2,3,4].filter(i=>$("qc"+i).checked).length;
   $("qBtn").onclick=()=>{
     const txt=$("qIn").value.trim(),o=$("qOut");o.hidden=false;
     if(!txt){o.innerHTML='<span class="no">Em hãy viết câu hỏi trước.</span>';return}
     const tips=[];
-    if(txt.split(/\s+/).length<8)tips.push("Câu hỏi còn ngắn. Thêm đối tượng (ai?) và phạm vi (ở đâu, khi nào?).");
-    if(/tốt không|có hại không|thế nào là/i.test(txt))tips.push("Từ như \"tốt\", \"có hại\" khó đo. Thay bằng điều đo được: điểm số, số giờ, tỉ lệ…");
+    if(txt.split(/\s+/).length<10)tips.push("Câu hỏi còn ngắn. Thêm phạm vi: bao nhiêu đề, môn nào, bao nhiêu học sinh?");
+    if(/tốt không|hiệu quả không|có tốt|hay không\?/i.test(txt)&&!/\d|bao nhiêu|phần trăm|%/i.test(txt))tips.push("Từ như \"tốt\", \"hiệu quả\" khó đo. Hỏi bằng con số: bao nhiêu phần trăm, bao nhiêu lần, bao nhiêu phút?");
     if(!/\?$/.test(txt))tips.push("Câu hỏi nên kết thúc bằng dấu chấm hỏi.");
     o.innerHTML=(n()===5?'<span class="ok">Câu hỏi đạt cả 5 tiêu chí.</span>':`<span class="no">Câu hỏi đạt ${n()}/5 tiêu chí.</span> Hãy sửa để đạt các tiêu chí còn thiếu.`)+(tips.length?"<br><br>Gợi ý:<br>• "+tips.map(esc).join("<br>• "):"");
   };
@@ -535,13 +664,14 @@ init(){
 }},
 source:{html:`
 <p><b>Phần 1. Chấm điểm một nguồn tài liệu em đang đọc</b> (1 = kém, 3 = tốt)</p>
-${["Mới","Liên quan","Uy tín","Chính xác","Mục đích khách quan"].map((c,i)=>`<label class="f" for="cr${i}">${c}<select id="cr${i}"><option value="1">1 - Kém</option><option value="2" selected>2 - Trung bình</option><option value="3">3 - Tốt</option></select></label>`).join("")}
+${["Mới","Liên quan đến đề tài","Uy tín","Chính xác, có ví dụ hoặc số liệu","Mục đích khách quan (không quảng cáo)"].map((c,i)=>`<label class="f" for="cr${i}">${c}<select id="cr${i}"><option value="1">1 - Kém</option><option value="2" selected>2 - Trung bình</option><option value="3">3 - Tốt</option></select></label>`).join("")}
 <button class="btn" id="crBtn">Xem kết quả</button><div class="out" id="crOut" hidden></div>
 <p style="margin-top:8px"><b>Phần 2. Tạo trích dẫn theo chuẩn APA</b></p>
 <div class="row"><label class="f" for="apA">Tác giả (Họ, tên viết tắt)<input type="text" id="apA" value="Nguyễn, V. A."></label><label class="f" for="apY">Năm xuất bản<input type="text" id="apY" value="2024"></label></div>
-<label class="f" for="apT">Tên bài hoặc tên sách<input type="text" id="apT" value="Ảnh hưởng của lời nhắc nhở đến thói quen học tập của học sinh"></label>
-<div class="row"><label class="f" for="apS">Tạp chí, nhà xuất bản hoặc trang web<input type="text" id="apS" value="Tạp chí Giáo dục"></label><label class="f" for="apU">Đường dẫn (nếu có)<input type="text" id="apU" placeholder="https://..."></label></div>
-<div class="btns"><button class="btn" id="apBtn">Tạo trích dẫn</button><button class="btn ghost" id="apCopy">Sao chép</button></div><div class="out" id="apOut"></div>`,
+<label class="f" for="apT">Tên bài hoặc tên tài liệu<input type="text" id="apT" value="Phát hiện hành vi gian lận trong thi trực tuyến dựa trên sự kiện trình duyệt"></label>
+<div class="row"><label class="f" for="apS">Tạp chí, nhà xuất bản hoặc trang web<input type="text" id="apS" value="Tạp chí Khoa học Giáo dục"></label><label class="f" for="apU">Đường dẫn (nếu có)<input type="text" id="apU" placeholder="https://..."></label></div>
+<div class="btns"><button class="btn" id="apBtn">Tạo trích dẫn</button><button class="btn ghost" id="apCopy">Sao chép</button></div><div class="out" id="apOut"></div>
+<p class="muted" style="font-size:14px">Tên bài trong ô trên chỉ là ví dụ để em thấy cách trình bày. Hãy thay bằng tài liệu thật em đã đọc.</p>`,
 init(){
   $("crBtn").onclick=()=>{const v=[0,1,2,3,4].map(i=>Number($("cr"+i).value)),s=v.reduce((a,b)=>a+b,0),o=$("crOut");o.hidden=false;
     o.innerHTML=`Tổng điểm: <b>${s}/15</b>. `+(v.includes(1)?'<span class="no">Có tiêu chí bị chấm 1. Nên tìm nguồn khác hoặc đối chiếu thêm.</span>':s>=13?'<span class="ok">Nguồn đáng tin cậy, có thể dùng.</span>':s>=10?"Dùng được, nhưng nên đối chiếu với nguồn khác.":'<span class="no">Nguồn yếu, nên tìm nguồn khác.</span>')};
@@ -549,89 +679,132 @@ init(){
   $("apBtn").onclick=mk;mk();
   $("apCopy").onclick=()=>copyText($("apOut").textContent,$("apCopy"),$("apOut"));
 }},
-vars:{html:`<p><b>Phần 1.</b> Đề tài: <i>"Nhiệt độ nước có ảnh hưởng đến thời gian tan của viên đường không?"</i> Chọn loại biến cho từng yếu tố.</p>
-${[["Nhiệt độ nước","doclap"],["Thời gian viên đường tan hết","phuthuoc"],["Lượng nước trong cốc","kiemsoat"],["Loại và kích thước viên đường","kiemsoat"],["Có khuấy hay không khuấy","kiemsoat"]].map((x,i)=>`<label class="f" for="v${i}">${x[0]}<select id="v${i}" data-a="${x[1]}"><option value="">Chọn loại biến</option><option value="doclap">Biến độc lập</option><option value="phuthuoc">Biến phụ thuộc</option><option value="kiemsoat">Biến kiểm soát</option></select></label>`).join("")}
+vars:{html:`<p><b>Phần 1.</b> Thử nghiệm: <i>"3 giáo viên đưa cùng một đề 40 câu lên hệ thống bằng hai cách: nhập thủ công và dùng giải pháp tự động. Em bấm giờ và đếm số câu bị sai."</i> Chọn loại biến cho từng yếu tố.</p>
+${[["Cách đưa đề lên hệ thống (thủ công hay tự động)","doclap"],["Thời gian đưa đề lên hệ thống (phút)","phuthuoc"],["Số câu bị sai sau khi đưa lên","phuthuoc"],["Cùng một đề 40 câu cho cả hai cách","kiemsoat"],["Cùng giáo viên, cùng máy tính, cùng trình duyệt","kiemsoat"]].map((x,i)=>`<label class="f" for="v${i}">${x[0]}<select id="v${i}" data-a="${x[1]}"><option value="">Chọn loại biến</option><option value="doclap">Biến độc lập</option><option value="phuthuoc">Biến phụ thuộc</option><option value="kiemsoat">Biến kiểm soát</option></select></label>`).join("")}
 <button class="btn" id="vBtn">Kiểm tra</button><div class="out" id="vOut" hidden></div>
-<p style="margin-top:8px"><b>Phần 2.</b> Viết giả thuyết cho đề tài của em.</p>
-<div class="row"><label class="f" for="hN">Nếu…<input type="text" id="hN" placeholder="tăng nhiệt độ nước"></label><label class="f" for="hT">thì…<input type="text" id="hT" placeholder="đường tan nhanh hơn"></label></div>
-<label class="f" for="hV">vì…<input type="text" id="hV" placeholder="các phân tử nước chuyển động nhanh hơn"></label>
+<p style="margin-top:8px"><b>Phần 2.</b> Viết giả thuyết cho một câu hỏi nghiên cứu của đề tài.</p>
+<div class="row"><label class="f" for="hN">Nếu…<input type="text" id="hN" placeholder="giáo viên dùng giải pháp tự động để đưa đề lên hệ thống"></label><label class="f" for="hT">thì…<input type="text" id="hT" placeholder="thời gian giảm ít nhất 70% so với nhập thủ công"></label></div>
+<label class="f" for="hV">vì…<input type="text" id="hV" placeholder="hệ thống tự tách câu, phương án, đáp án và hình ảnh"></label>
 <div class="out" id="hOut"></div>
 <div class="btns"><button class="btn send" id="hNop">Nộp giả thuyết cho giáo viên</button><span class="sync" id="hMsg"></span></div>`,
 init(){
   $("vBtn").onclick=()=>{let ok=0;const sel=[...document.querySelectorAll("select[data-a]")];sel.forEach(s=>{const r=s.value===s.dataset.a;if(r)ok++;s.style.borderColor=s.value?(r?"var(--good)":"var(--bad)"):""});
-    const o=$("vOut");o.hidden=false;o.innerHTML=ok===sel.length?'<span class="ok">Đúng cả 5.</span> Thí nghiệm chỉ có một biến độc lập. Nếu thay đổi nhiều thứ cùng lúc, em sẽ không biết điều gì gây ra kết quả.':`Đúng ${ok}/${sel.length}. Gợi ý: chỉ có <b>một</b> điều em chủ động thay đổi và <b>một</b> điều em đo.`};
+    const o=$("vOut");o.hidden=false;o.innerHTML=ok===sel.length?'<span class="ok">Đúng cả 5.</span> Thử nghiệm chỉ thay đổi một điều (cách đưa đề lên) và đo hai điều (thời gian, số câu sai).':`Đúng ${ok}/${sel.length}. Gợi ý: chỉ có <b>một</b> điều em chủ động thay đổi; những gì em đo là biến phụ thuộc.`};
   const txt=()=>{const v=k=>$(k).value.trim();return v("hN")&&v("hT")?`Nếu ${v("hN")} thì ${v("hT")}${v("hV")?" vì "+v("hV"):""}.`:""};
   const h=()=>{const v=k=>$(k).value.trim();$("hOut").innerHTML=`<b>Nếu</b> ${esc(v("hN")||"…")} <b>thì</b> ${esc(v("hT")||"…")} <b>vì</b> ${esc(v("hV")||"…")}.`};
   ["hN","hT","hV"].forEach(k=>$(k).addEventListener("input",h));h();
   $("hNop").onclick=()=>nop(3,"gia-thuyet",txt(),"hMsg");nopStatus(3,"gia-thuyet","hMsg");
 }},
-plan:{html:`<p>Điền kế hoạch nghiên cứu của em. Bản tóm tắt bên dưới tự cập nhật theo nội dung em điền.</p>
-<label class="f" for="pQ">Câu hỏi nghiên cứu<input type="text" id="pQ" value="${esc(CASE)}"></label>
-<label class="f" for="pH">Giả thuyết<input type="text" id="pH" value="Nhóm dùng ứng dụng có tỉ lệ nộp bài đúng hạn cao hơn nhóm không dùng"></label>
-<div class="row"><label class="f" for="pM">Phương pháp<select id="pM"><option>Thực nghiệm có đối chứng</option><option>Khảo sát bằng phiếu hỏi</option><option>Phỏng vấn</option><option>Quan sát</option><option>Thiết kế, chế tạo và thử nghiệm</option></select></label>
-<label class="f" for="pN">Cỡ mẫu (số người hoặc số lần đo)<input type="number" id="pN" value="60" min="1"></label></div>
-<div class="row"><label class="f" for="pIV">Biến độc lập<input type="text" id="pIV" value="Có hoặc không dùng ứng dụng nhắc học"></label><label class="f" for="pDV">Biến phụ thuộc<input type="text" id="pDV" value="Tỉ lệ bài nộp đúng hạn"></label></div>
-<label class="f" for="pT">Thời gian thực hiện<input type="text" id="pT" value="4 tuần"></label>
-<label class="chk"><input type="checkbox" id="pE" checked><span>Có phiếu đồng ý của người tham gia (và của phụ huynh nếu người tham gia dưới 18 tuổi)</span></label>
+plan:{html:`<p>Kế hoạch đã điền sẵn theo đề tài. Em sửa lại cho đúng với điều kiện của nhóm mình, bản tóm tắt bên dưới sẽ tự cập nhật.</p>
+<label class="f" for="pQ">Câu hỏi nghiên cứu<input type="text" id="pQ" value="${esc(RQ[0].replace(/^RQ1\. /,""))}"></label>
+<label class="f" for="pH">Giả thuyết<input type="text" id="pH" value="Giải pháp trích xuất đúng ít nhất 95% số câu hỏi (gồm hình ảnh) trong bộ đề kiểm thử"></label>
+<div class="row"><label class="f" for="pM">Phương pháp<select id="pM"><option selected>Thiết kế, chế tạo và thử nghiệm</option><option>Thực nghiệm có đối chứng</option><option>Khảo sát bằng phiếu hỏi</option><option>Phỏng vấn</option><option>Quan sát</option></select></label>
+<label class="f" for="pN">Cỡ mẫu (số đề, số người hoặc số lần đo)<input type="number" id="pN" value="30" min="1"></label></div>
+<div class="row"><label class="f" for="pIV">Biến độc lập<input type="text" id="pIV" value="Cách đưa đề lên hệ thống: thủ công hay tự động"></label><label class="f" for="pDV">Biến phụ thuộc<input type="text" id="pDV" value="Tỉ lệ câu trích đúng; thời gian đưa một đề lên hệ thống"></label></div>
+<label class="f" for="pT">Thời gian thực hiện<input type="text" id="pT" value="8 tuần"></label>
+<label class="chk"><input type="checkbox" id="pE" checked><span>Có phiếu đồng ý của học sinh tham gia thử nghiệm giám sát (và của phụ huynh nếu dưới 18 tuổi)</span></label>
 <div class="out" id="pOut"></div>
 <div class="btns"><button class="btn send" id="pNop">Nộp kế hoạch cho giáo viên</button><button class="btn ghost" id="pCopy">Sao chép</button><span class="sync" id="pMsg"></span></div>`,
 init(){
   const ids=["pQ","pH","pM","pN","pIV","pDV","pT","pE"];
   const r=()=>{const v=k=>$(k).value.trim(),n=Number(v("pN"));
-    let t=`KẾ HOẠCH NGHIÊN CỨU\nCâu hỏi: ${v("pQ")}\nGiả thuyết: ${v("pH")}\nPhương pháp: ${v("pM")}\nCỡ mẫu: ${n||"?"}\nBiến độc lập: ${v("pIV")}\nBiến phụ thuộc: ${v("pDV")}\nThời gian: ${v("pT")}\nĐạo đức: ${$("pE").checked?"Đã có phiếu đồng ý":"CHƯA có phiếu đồng ý"}`;
-    const w=[];if(n&&n<30)w.push("Cỡ mẫu dưới 30: hãy nêu rõ đây là hạn chế trong báo cáo.");if(!$("pE").checked)w.push("Cần có sự đồng ý của người tham gia trước khi bắt đầu.");
-    if(v("pM")==="Thực nghiệm có đối chứng"&&n)t+=`\n→ Chia ngẫu nhiên thành 2 nhóm, mỗi nhóm khoảng ${Math.floor(n/2)} người.`;
+    let t=`KẾ HOẠCH NGHIÊN CỨU\nĐề tài: ${CASE}\nCâu hỏi: ${v("pQ")}\nGiả thuyết: ${v("pH")}\nPhương pháp: ${v("pM")}\nCỡ mẫu: ${n||"?"}\nBiến độc lập: ${v("pIV")}\nBiến phụ thuộc: ${v("pDV")}\nThời gian: ${v("pT")}\nĐạo đức: ${$("pE").checked?"Đã có phiếu đồng ý":"CHƯA có phiếu đồng ý"}`;
+    if(v("pM").startsWith("Thiết kế"))t+="\n→ Chuẩn bị dữ liệu chuẩn (kiểm tra thủ công từng đề) để chấm kết quả của hệ thống.";
+    if(v("pM")==="Thực nghiệm có đối chứng"&&n)t+=`\n→ Chia ngẫu nhiên thành 2 nhóm, mỗi nhóm khoảng ${Math.floor(n/2)}.`;
+    const w=[];if(n&&n<30)w.push("Cỡ mẫu dưới 30: hãy nêu rõ đây là hạn chế trong báo cáo.");if(!$("pE").checked)w.push("Cần có sự đồng ý của người tham gia trước khi thử nghiệm giám sát.");
     $("pOut").textContent=t+(w.length?"\n\nLưu ý:\n- "+w.join("\n- "):"")};
   ids.forEach(k=>{$(k).addEventListener("input",r);$(k).addEventListener("change",r)});r();
   $("pCopy").onclick=()=>copyText($("pOut").textContent,$("pCopy"),$("pOut"));
   $("pNop").onclick=()=>nop(4,"ke-hoach",$("pOut").textContent,"pMsg");nopStatus(4,"ke-hoach","pMsg");
 }},
-journal:{html:`<p>Ghi nhật ký sau mỗi buổi làm nghiên cứu. Nội dung tự lưu trên máy này. Bấm "Nộp nhật ký" để gửi bản mới nhất cho giáo viên.</p>
+lab:{html:`<div class="subh">Thực hành 1. Thử trích xuất đề thi</div>
+<p>Dán nội dung đề vào ô dưới. Trong file Word thật, đáp án đúng thường được đánh dấu bằng gạch chân hoặc tô màu. Ở bản thử này, em đánh dấu bằng dấu <code>*</code> trước phương án đúng, và ghi hình ảnh là <code>[HÌNH: tên file]</code>.</p>
+<label class="f" for="exIn">Nội dung đề<textarea id="exIn" style="min-height:230px;font-family:var(--mono);font-size:13.5px"></textarea></label>
+<div class="btns"><button class="btn" id="exBtn">Trích xuất</button><button class="btn ghost" id="exReset">Dùng lại đề mẫu</button></div>
+<div class="out" id="exSum"></div>
+<div class="qlist" id="exOut"></div>
+<p class="muted" style="font-size:14px">Đề mẫu có 4 lỗi cố ý. Em tìm được bao nhiêu lỗi trước khi bấm Trích xuất? Mỗi câu bị đánh dấu là một câu giáo viên phải duyệt lại; đó chính là số liệu cho RQ1.</p>
+<div class="subh" style="margin-top:14px">Thực hành 2. Thử cơ chế phát hiện vi phạm</div>
+<p>Bấm "Bắt đầu làm bài thử", sau đó thử các hành động: chuyển sang tab khác, bấm ra ngoài cửa sổ, sao chép đề, bấm chuột phải. Hành động thứ ba sẽ dừng bài làm (mô phỏng). Hãy để ý: có lần nào hệ thống báo nhầm không?</p>
+<div class="alertbar" id="mBar" role="status"></div>
+<div class="exam" id="mExam"><b>Câu 1.</b> Hàm số y = x³ − 3x đạt cực đại tại điểm nào?<br>A. x = 1 &nbsp;&nbsp; B. x = −1 &nbsp;&nbsp; C. x = 0 &nbsp;&nbsp; D. x = 3</div>
+<div class="btns"><button class="btn" id="mStart">Bắt đầu làm bài thử</button><button class="btn ghost" id="mStop" hidden>Kết thúc</button></div>
+<div class="tbl"><table id="mLog"></table></div>
+<p class="muted" style="font-size:14px">Các sự kiện xảy ra trong vòng 1,5 giây được gộp làm một, vì khi chuyển tab trình duyệt thường báo cùng lúc hai sự kiện. Đây là một quyết định thiết kế giúp giảm báo nhầm; em cần nêu nó trong phần Phương pháp.</p>
+<div class="subh" style="margin-top:14px">Thực hành 3. Nhật ký nghiên cứu</div>
+<p>Ghi lại sau mỗi buổi làm: đã thử gì, kết quả, lỗi gặp phải, ý tưởng sửa. Nội dung tự lưu trên máy này.</p>
 <div class="btns"><button class="btn ghost" id="jAdd">Thêm dòng cho hôm nay</button></div>
-<label class="f" for="jText">Nhật ký<textarea id="jText" style="min-height:200px;font-family:var(--mono);font-size:14px"></textarea></label>
+<label class="f" for="jText">Nhật ký<textarea id="jText" style="min-height:180px;font-family:var(--mono);font-size:14px"></textarea></label>
 <div class="btns"><button class="btn send" id="jNop">Nộp nhật ký cho giáo viên</button><button class="btn ghost" id="jCopy">Sao chép</button><span class="sync" id="jMsg"></span></div>`,
 init(){
-  const ta=$("jText");ta.value=S.journal||"27/10 - Lập bảng số liệu trên Google Sheets. Đã có 58/60 phiếu đồng ý.\n";
+  const ex=$("exIn");ex.value=S.exam||SAMPLE_EXAM;
+  ex.addEventListener("input",()=>{S.exam=ex.value;save()});
+  const run=()=>{const qs=parseExam(ex.value),bad=qs.filter(q=>q.canhBao.length),nh=qs.reduce((a,q)=>a+q.hinh.length,0);
+    $("exSum").innerHTML=qs.length?`Tách được <b>${qs.length}</b> câu hỏi, <b>${nh}</b> hình ảnh. <span class="ok">${qs.length-bad.length} câu hợp lệ</span>, <span class="no">${bad.length} câu cần giáo viên kiểm tra</span>. Tỉ lệ câu hợp lệ: <b>${Math.round((qs.length-bad.length)/qs.length*100)}%</b>.`:'<span class="no">Không tìm thấy câu hỏi nào. Mỗi câu cần bắt đầu bằng "Câu 1.", "Câu 2."…</span>';
+    $("exOut").innerHTML=qs.map(q=>`<div class="qcard${q.canhBao.length?" warn":""}"><b>Câu ${q.so}.</b> ${esc(q.noiDung)}
+      ${q.hinh.map(h=>`<div class="imgph">🖼 ${esc(h)}</div>`).join("")}
+      <div class="opts2">${q.pa.map(p=>`<span class="${q.dapAn.includes(p.k)?"ans":""}">${p.k}. ${esc(p.t)}${q.dapAn.includes(p.k)?" ✓":""}</span>`).join("")}</div>
+      ${q.canhBao.length?`<div>${q.canhBao.map(w=>`<span class="tag">⚠ ${esc(w)}</span>`).join("")}</div>`:'<div><span class="tag ok-tag">Hợp lệ</span></div>'}</div>`).join("")};
+  $("exBtn").onclick=run;$("exReset").onclick=()=>{ex.value=SAMPLE_EXAM;S.exam="";save();run()};run();
+  $("mStart").onclick=()=>{MON.on=true;MON.count=0;MON.last=0;MON.log=[];MON.fs=false;
+    try{const p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.then)p.then(()=>{MON.fs=true},()=>{})}catch(e){}
+    renderMon()};
+  $("mStop").onclick=()=>{MON.on=false;try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}renderMon()};
+  renderMon();
+  const ta=$("jText");ta.value=S.journal||"28/10 - Chạy thử trích xuất 5 đề Toán: 108/110 câu đúng. Lỗi: 2 câu có công thức MathType bị mất.\n";
   ta.addEventListener("input",()=>{S.journal=ta.value;save()});
-  $("jAdd").onclick=()=>{const d=new Date();ta.value+=`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")} - Việc đã làm: … | Điều bất thường: … | Ý tưởng: …\n`;S.journal=ta.value;save();ta.focus()};
+  $("jAdd").onclick=()=>{const d=new Date();ta.value+=`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")} - Đã thử: … | Kết quả: … | Lỗi: … | Ý tưởng sửa: …\n`;S.journal=ta.value;save();ta.focus()};
   $("jCopy").onclick=()=>copyText(ta.value,$("jCopy"),ta);
   $("jNop").onclick=()=>nop(5,"nhat-ky",ta.value,"jMsg");nopStatus(5,"nhat-ky","jMsg");
 }},
-stats:{html:`<p>Nhập số liệu của hai nhóm, mỗi số cách nhau bằng dấu cách hoặc xuống dòng. Số thập phân viết 7,5 hay 7.5 đều được. Số liệu mẫu là tỉ lệ % bài nộp đúng hạn của từng bạn.</p>
-<div class="row"><label class="f" for="sA">Nhóm A (thực nghiệm)<textarea id="sA">90 85 100 80 95 85 90 75 100 80</textarea></label>
-<label class="f" for="sB">Nhóm B (đối chứng)<textarea id="sB">70 65 80 60 75 85 70 55 75 75</textarea></label></div>
+stats:{html:`<div class="subh">Phần 1. Đánh giá cơ chế phát hiện vi phạm (RQ2)</div>
+<p>Nhập số lần của từng loại kết quả sau khi đối chiếu nhật ký hệ thống với kịch bản thử nghiệm.</p>
+<div class="row3"><label class="f" for="cTP">Phát hiện đúng (TP)<input type="number" id="cTP" min="0" value="46"></label>
+<label class="f" for="cFP">Báo nhầm (FP)<input type="number" id="cFP" min="0" value="3"></label>
+<label class="f" for="cFN">Bỏ sót (FN)<input type="number" id="cFN" min="0" value="4"></label></div>
+<div class="out" id="cOut"></div>
+<div class="subh" style="margin-top:14px">Phần 2. So sánh thời gian đưa một đề 40 câu lên hệ thống (RQ3)</div>
+<p>Nhập số phút của từng lần đo, mỗi số cách nhau bằng dấu cách hoặc xuống dòng. Thời gian tự động đã gồm cả thời gian giáo viên duyệt lại.</p>
+<div class="row"><label class="f" for="sA">Nhập thủ công (phút)<textarea id="sA">52 61 48 70 55 66 58 49 63 57</textarea></label>
+<label class="f" for="sB">Dùng giải pháp tự động (phút)<textarea id="sB">9 7 12 8 10 6 11 9 8 10</textarea></label></div>
 <button class="btn" id="sBtn">Tính toán</button>
-<div class="tbl"><table id="sTbl"></table></div><div class="chart" id="sChart"></div><div class="out" id="sOut"></div>`,
+<div class="tbl"><table id="sTbl"></table></div><div class="chart" id="sChart"></div><div class="out" id="sOut"></div>
+<p class="muted" style="font-size:14px">Các số điền sẵn là số liệu mẫu để em làm quen với công cụ, không phải kết quả thật của đề tài.</p>`,
 init(){
+  const pct=x=>(x*100).toLocaleString("vi-VN",{maximumFractionDigits:1})+"%";
+  const prf=()=>{const g=k=>Math.max(0,Number($(k).value)||0),tp=g("cTP"),fp=g("cFP"),fn=g("cFN");
+    const P=tp+fp?tp/(tp+fp):0,R=tp+fn?tp/(tp+fn):0,F=P+R?2*P*R/(P+R):0;
+    $("cOut").innerHTML=`<b>Precision</b> = ${tp} ÷ (${tp} + ${fp}) = <b>${pct(P)}</b>: trong các lần cảnh báo, ${pct(P)} là đúng.<br><b>Recall</b> = ${tp} ÷ (${tp} + ${fn}) = <b>${pct(R)}</b>: hệ thống bắt được ${pct(R)} số lần vi phạm thật.<br><b>F1</b> = <b>${pct(F)}</b><br>`+
+      (tp+fp+fn?`So với giả thuyết H2 (phát hiện ≥ 90%, báo nhầm ≤ 5%): Recall ${R>=0.9?'<span class="ok">đạt</span>':'<span class="no">chưa đạt</span>'}; tỉ lệ báo nhầm ${pct(1-P)} ${1-P<=0.05?'<span class="ok">đạt</span>':'<span class="no">chưa đạt</span>'}.`:"")};
+  ["cTP","cFP","cFN"].forEach(k=>$(k).addEventListener("input",prf));prf();
   const parse=s=>s.split(/[\s;]+/).filter(Boolean).map(x=>Number(x.replace(",","."))).filter(x=>!isNaN(x));
   const st=a=>{const n=a.length;if(!n)return null;const m=a.reduce((x,y)=>x+y,0)/n,s=[...a].sort((x,y)=>x-y),med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2,sd=n>1?Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(n-1)):0;return{n,m,med,sd,min:s[0],max:s[n-1]}};
   const f=x=>x.toLocaleString("vi-VN",{maximumFractionDigits:1});
   const run=()=>{const A=st(parse($("sA").value)),B=st(parse($("sB").value));
-    if(!A||!B){$("sOut").textContent="Mỗi nhóm cần ít nhất một số.";return}
-    $("sTbl").innerHTML=`<tr><th></th><th>n</th><th>Trung bình</th><th>Trung vị</th><th>Độ lệch chuẩn</th><th>Nhỏ nhất – Lớn nhất</th></tr>`+[["Nhóm A",A],["Nhóm B",B]].map(([k,s])=>`<tr><td>${k}</td><td>${s.n}</td><td>${f(s.m)}</td><td>${f(s.med)}</td><td>${f(s.sd)}</td><td>${f(s.min)} – ${f(s.max)}</td></tr>`).join("");
+    if(!A||!B){$("sOut").textContent="Mỗi cách cần ít nhất một số đo.";return}
+    $("sTbl").innerHTML=`<tr><th></th><th>n</th><th>Trung bình</th><th>Trung vị</th><th>Độ lệch chuẩn</th><th>Nhỏ nhất – Lớn nhất</th></tr>`+[["Thủ công",A],["Tự động",B]].map(([k,s])=>`<tr><td>${k}</td><td>${s.n}</td><td>${f(s.m)}</td><td>${f(s.med)}</td><td>${f(s.sd)}</td><td>${f(s.min)} – ${f(s.max)}</td></tr>`).join("");
     const top=Math.max(A.m+A.sd,B.m+B.sd,1)*1.15,W=420,H=230,pl=44,pb=34,pt=14,ch=H-pb-pt,y=v=>pt+ch-(v/top)*ch;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Biểu đồ trung bình hai nhóm">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Biểu đồ thời gian trung bình của hai cách">`;
     [0,.25,.5,.75,1].map(k=>top*k).forEach(t=>{svg+=`<line x1="${pl}" x2="${W-10}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(t)+4}" font-size="11" text-anchor="end" fill="var(--muted)">${Math.round(t)}</text>`});
-    [["Nhóm A",A,"var(--blue)"],["Nhóm B",B,"var(--orange)"]].forEach(([k,s,c],i)=>{const x=pl+50+i*170,bw=90,cx=x+bw/2,hi=y(s.m+s.sd),lo=y(Math.max(0,s.m-s.sd));
+    svg+=`<text x="12" y="${pt+ch/2}" font-size="11" fill="var(--muted)" transform="rotate(-90 12 ${pt+ch/2})" text-anchor="middle">phút</text>`;
+    [["Thủ công",A,"var(--orange)"],["Tự động",B,"var(--blue)"]].forEach(([k,s,c],i)=>{const x=pl+50+i*170,bw=90,cx=x+bw/2,hi=y(s.m+s.sd),lo=y(Math.max(0,s.m-s.sd));
       svg+=`<rect x="${x}" y="${y(s.m)}" width="${bw}" height="${pt+ch-y(s.m)}" fill="${c}" rx="3"/><line x1="${cx}" x2="${cx}" y1="${hi}" y2="${lo}" stroke="var(--fg)" stroke-width="1.5"/><line x1="${cx-8}" x2="${cx+8}" y1="${hi}" y2="${hi}" stroke="var(--fg)" stroke-width="1.5"/><line x1="${cx-8}" x2="${cx+8}" y1="${lo}" y2="${lo}" stroke="var(--fg)" stroke-width="1.5"/><text x="${cx}" y="${H-12}" font-size="13" text-anchor="middle" fill="var(--fg)">${k} (n=${s.n})</text>`});
     $("sChart").innerHTML=svg+"</svg>";
-    const diff=A.m-B.m,d=Math.abs(diff)/(Math.sqrt((A.sd**2+B.sd**2)/2)||1);
-    $("sOut").innerHTML=`Chênh lệch trung bình: <b>${f(diff)}</b>. Thanh dọc trên mỗi cột là ±1 độ lệch chuẩn.<br>`+
-      (d>=0.8?"Chênh lệch lớn so với độ phân tán của số liệu. Đây là dấu hiệu mạnh, nhưng vẫn cần kiểm định thống kê và nêu hạn chế về cỡ mẫu.":d>=0.5?"Chênh lệch ở mức vừa so với độ phân tán. Hãy thận trọng khi kết luận.":"Chênh lệch nhỏ so với độ phân tán. Có thể chỉ do ngẫu nhiên, chưa nên kết luận hai nhóm khác nhau.")+
-      (A.n<30||B.n<30?"<br>Lưu ý: mỗi nhóm có dưới 30 số liệu.":"")};
+    const red=A.m?(A.m-B.m)/A.m:0;
+    $("sOut").innerHTML=`Thời gian trung bình giảm <b>${f(A.m-B.m)} phút</b>, tức giảm <b>${pct(red)}</b> so với nhập thủ công. Thanh dọc trên mỗi cột là ±1 độ lệch chuẩn.<br>So với giả thuyết H3 (giảm ≥ 70%): ${red>=0.7?'<span class="ok">đạt</span>':'<span class="no">chưa đạt</span>'}.`+(A.n<30||B.n<30?"<br>Lưu ý: số lần đo còn ít, hãy nêu đây là hạn chế.":"")};
   $("sBtn").onclick=run;run();
 }},
-imrad:{html:`<p>Mỗi câu dưới đây lấy từ báo cáo mẫu. Chọn phần của báo cáo mà câu đó thuộc về.</p>
-${[["Mỗi tuần, lớp 10A có khoảng 10 bạn quên nộp bài tập về nhà.","I"],["60 học sinh được bốc thăm chia thành hai nhóm, mỗi nhóm 30 bạn.","M"],["Nhóm thực nghiệm nộp đúng hạn trung bình 88% số bài, nhóm đối chứng 71%.","R"],["Kết quả phù hợp với nghiên cứu trước ở sinh viên; tuy nhiên mẫu chỉ gồm một trường.","D"],["Giáo viên ghi nhận việc nộp bài vào mỗi thứ Sáu trong 4 tuần.","M"],["Câu hỏi đặt ra là liệu ứng dụng nhắc học có giúp cải thiện điều này không.","I"]].map((x,i)=>`<label class="f" for="im${i}">${x[0]}<select id="im${i}" data-a="${x[1]}"><option value="">Chọn phần</option><option value="I">Đặt vấn đề</option><option value="M">Phương pháp</option><option value="R">Kết quả</option><option value="D">Thảo luận</option></select></label>`).join("")}
+imrad:{html:`<p>Mỗi câu dưới đây lấy từ báo cáo của đề tài. Chọn phần của báo cáo mà câu đó thuộc về.</p>
+${[["Giáo viên thường mất nhiều thời gian để đưa đề thi từ file Word lên hệ thống ôn thi trực tuyến.","I"],["Bộ dữ liệu kiểm thử gồm 30 đề Word của 3 môn, có hình ảnh và công thức.","M"],["Giải pháp trích xuất đúng 1.152 trên 1.200 câu hỏi (96%).","R"],["Phần lớn lỗi xảy ra ở câu có công thức MathType, vì công thức được lưu dưới dạng hình ảnh.","D"],["20 học sinh tình nguyện làm bài thử theo kịch bản gồm 10 hành động.","M"],["Đề tài đặt câu hỏi: giải pháp tự động trích xuất đúng bao nhiêu phần trăm câu hỏi?","I"],["Cơ chế giám sát đạt Precision 93,9% và Recall 92%.","R"],["Hệ thống chưa phát hiện được việc dùng điện thoại thứ hai; đây là hạn chế của giải pháp chạy trên trình duyệt.","D"]].map((x,i)=>`<label class="f" for="im${i}">${x[0]}<select id="im${i}" data-a="${x[1]}"><option value="">Chọn phần</option><option value="I">Đặt vấn đề</option><option value="M">Phương pháp</option><option value="R">Kết quả</option><option value="D">Thảo luận</option></select></label>`).join("")}
 <button class="btn" id="imBtn">Kiểm tra</button><div class="out" id="imOut" hidden></div>`,
 init(){$("imBtn").onclick=()=>{let ok=0;const sel=[...document.querySelectorAll("select[data-a]")];sel.forEach(s=>{const r=s.value===s.dataset.a;if(r)ok++;s.style.borderColor=s.value?(r?"var(--good)":"var(--bad)"):""});
-  const o=$("imOut");o.hidden=false;o.innerHTML=ok===sel.length?'<span class="ok">Đúng cả 6.</span> Em đã nắm cấu trúc IMRaD.':`Đúng ${ok}/${sel.length}. Mẹo: phần Kết quả chỉ nêu số liệu; phần Thảo luận mới so sánh, giải thích và nêu hạn chế.`}}},
-defense:{html:`<p>Đây là những câu hội đồng hay hỏi. Tự trả lời trước, sau đó bấm vào từng câu để xem gợi ý.</p>
+  const o=$("imOut");o.hidden=false;o.innerHTML=ok===sel.length?`<span class="ok">Đúng cả ${sel.length}.</span> Em đã nắm cấu trúc báo cáo.`:`Đúng ${ok}/${sel.length}. Mẹo: phần Kết quả chỉ nêu số liệu; phần Thảo luận giải thích nguyên nhân và nêu hạn chế.`}}},
+defense:{html:`<p>Đây là những câu hội đồng hay hỏi với đề tài này. Tự trả lời trước, sau đó bấm vào từng câu để xem gợi ý.</p>
 <div class="flip">
-${[["Vì sao em chọn đề tài này?","Kể quan sát thực tế khiến em tò mò, kèm một con số nếu có."],["Đề tài của em có gì mới?","Chỉ ra khoảng trống ở bài 2: đối tượng mới, cách làm mới hoặc bối cảnh Việt Nam."],["Làm sao em chắc kết quả không do yếu tố khác gây ra?","Nói về nhóm đối chứng, cách chia nhóm ngẫu nhiên và các biến kiểm soát."],["Cỡ mẫu của em có đủ không?","Nêu số lượng, thừa nhận hạn chế và cách em sẽ mở rộng nếu làm tiếp."],["Nếu làm lại, em sẽ thay đổi điều gì?","Chọn 1–2 điểm cụ thể. Câu trả lời này cho thấy em biết tự đánh giá."],["Kết quả của em áp dụng được vào đâu?","Nói rõ ai được lợi và lợi như thế nào: học sinh, giáo viên, nhà trường."]].map(x=>`<details><summary>${x[0]}</summary><p>${x[1]}</p></details>`).join("")}
+${[["Đề tài của em khác gì các phần mềm nhập đề, trộn đề đã có?","Dựa vào bảng tổng quan ở bài 2: giữ được hình ảnh, hiểu định dạng đề THPT, và tích hợp cảnh báo vi phạm trong cùng một hệ thống."],["Nếu file Word không soạn theo mẫu chuẩn thì sao?","Nêu tỉ lệ trích đúng riêng với nhóm đề không chuẩn, và cơ chế đánh dấu câu cần giáo viên duyệt lại."],["Hệ thống báo nhầm thì học sinh có bị xử lý oan không?","Nêu tỉ lệ báo nhầm đo được, cách cảnh báo theo mức, và nguyên tắc giáo viên xem nhật ký trước khi kết luận."],["Hệ thống có phát hiện được điện thoại thứ hai không?","Thừa nhận đây là hạn chế: trình duyệt chỉ biết những gì xảy ra trên chính máy đó. Nêu hướng phát triển."],["Em bảo vệ dữ liệu của học sinh như thế nào?","Chỉ lưu loại sự kiện và thời điểm, có phiếu đồng ý, dùng mã số thay tên khi báo cáo."],["Công thức toán và hình ảnh được xử lý ra sao?","Mô tả cách hệ thống tìm hình trong file Word và gắn vào câu; nêu kết quả riêng cho nhóm câu có hình, có công thức."]].map(x=>`<details><summary>${x[0]}</summary><p>${x[1]}</p></details>`).join("")}
 </div>
-<p style="margin-top:8px"><b>Kiểm tra poster của em</b></p>
-${["Tên đề tài đọc được từ xa 3 mét","Kết quả chính nổi bật nhất","Mỗi biểu đồ có tên, tên trục và số mẫu n","Mỗi đoạn chữ không quá 50 từ","Có nêu hạn chế và hướng phát triển","Đã tập thuyết trình đúng 5 phút"].map((c,i)=>`<label class="chk"><input type="checkbox" id="ps${i}"><span>${c}</span></label>`).join("")}`,
+<p style="margin-top:8px"><b>Kiểm tra poster và bài thuyết trình</b></p>
+${["Tên đề tài đọc được từ xa 3 mét","Ba con số kết quả nổi bật nhất","Có sơ đồ luồng xử lý và ảnh giao diện","Có hình \"trước và sau\": file Word gốc và câu hỏi đã trích xuất","Mỗi biểu đồ có tên, tên trục và số mẫu n","Có nêu hạn chế và hướng phát triển","Đã chuẩn bị video demo dự phòng","Đã tập thuyết trình đúng 5 phút"].map((c,i)=>`<label class="chk"><input type="checkbox" id="ps${i}"><span>${c}</span></label>`).join("")}`,
 init(){}}
 };
 
@@ -640,21 +813,23 @@ function home(){
   const nDone=L.filter(l=>S.done[l.id]).length;
   return `<div class="hero"><div class="eyebrow">${isStudent()?"Chào "+esc(U.hoTen)+" · Lớp "+esc(U.lop):"Dành cho học sinh THPT"}</div>
 <h1>Bắt đầu để trở thành một nhà khoa học</h1>
-<p>Tám bài học dẫn em đi qua đủ các bước của một đề tài nghiên cứu khoa học: từ một điều em tò mò đến lúc đứng trước hội đồng. Mỗi bài có phần thực hành và câu hỏi kiểm tra nhanh.</p>
+<p>Tám bài học dẫn em thực hiện trọn vẹn một đề tài nghiên cứu khoa học về hệ thống phần mềm: từ đặt câu hỏi, đọc tài liệu, thiết kế và thử nghiệm, đến viết báo cáo và bảo vệ trước hội đồng.</p>
 <div class="stripe" aria-hidden="true"><i></i><i></i><i></i></div></div>
+<div class="case p2" style="margin-top:28px"><div class="lbl">Đề tài nghiên cứu</div><p class="topic">${CASE}</p>
+<p>Sau 8 bài, em sẽ có đủ sản phẩm của một đề tài hoàn chỉnh:</p>
+<ul class="deliv"><li>Ba câu hỏi nghiên cứu và giả thuyết</li><li>Bảng tổng quan tài liệu, chỉ ra khoảng trống</li><li>Kế hoạch nghiên cứu và bộ dữ liệu kiểm thử</li><li>Số liệu trích xuất đề và nhật ký giám sát</li><li>Kết quả phân tích: tỉ lệ trích đúng, Precision, Recall, thời gian tiết kiệm</li><li>Báo cáo, poster và bài thuyết trình có demo</li></ul></div>
 <div class="phases">${PH.map((p,i)=>`<div class="p${i}"><b>${p.k} · ${p.r}</b><span>${p.d}</span></div>`).join("")}</div>
-<div class="case p2"><div class="lbl">Đề tài mẫu xuyên suốt 8 bài</div><p><b>${CASE}</b></p><p>Ở mỗi bài, em sẽ thấy đề tài này tiến thêm một bước. Hãy làm song song với đề tài của chính em.</p></div>
 <h2>${nDone?`Em đã hoàn thành ${nDone}/8 bài`:"Bắt đầu từ bài 1"}</h2>
 <div class="cards">${L.map((l,i)=>`<a class="card p${ph(i)}" href="#${l.id}"><span class="top"><span class="n">${i+1}</span>${S.done[l.id]?'<span class="st">Đã xong ✓</span>':""}</span><b>${l.t}</b><span class="d">${l.d}</span></a>`).join("")}</div>
 <h2>Cách học hiệu quả</h2>
-<ul><li>Học theo thứ tự, vì mỗi bước dựa vào kết quả của bước trước.</li><li>Làm phần thực hành với đề tài của chính em, đừng chỉ đọc.</li><li>Ở bài 1, 3, 4 và 5, bấm nút màu cam để nộp sản phẩm cho giáo viên.</li><li>${isStudent()?"Tiến độ, điểm kiểm tra và bài nộp được lưu lên hệ thống của giáo viên.":"Tiến độ đang được lưu trên trình duyệt của máy này."}</li></ul>`;
+<ul><li>Học theo thứ tự, vì mỗi bước dựa vào kết quả của bước trước.</li><li>Cuối mỗi bài, khung "Áp dụng vào đề tài" cho biết sản phẩm em cần làm ra ở bước đó.</li><li>Ở bài 1, 3, 4 và 5, bấm nút màu cam để nộp sản phẩm cho giáo viên.</li><li>${isStudent()?"Tiến độ, điểm kiểm tra và bài nộp được lưu lên hệ thống của giáo viên.":"Tiến độ đang được lưu trên trình duyệt của máy này."}</li></ul>`;
 }
 function lesson(i){
   const l=L[i];
   return `<span class="phase">Chặng ${PH[ph(i)].k} · <b>Bài ${i+1}/8</b></span><h1>${l.t}</h1><p class="lead">${l.d}</p>
 <div class="goal"><b>Sau bài này em sẽ</b><ul>${l.goals.map(g=>`<li>${g}</li>`).join("")}</ul></div>
 ${l.body}
-<div class="case"><div class="lbl">Đề tài mẫu · bước ${i+1}</div><p>${l.caseText}</p></div>
+<div class="case"><div class="lbl">Áp dụng vào đề tài · bước ${i+1}</div><p>${l.caseText}</p></div>
 <section class="lab"><div class="lab-h">Thực hành</div><div class="tool">${TOOLS[l.tool].html}</div></section>
 <section class="lab"><div class="lab-h">Kiểm tra nhanh</div><div class="quiz">${l.quiz.map((q,qi)=>`<div class="q" data-qi="${qi}"><p class="qt">Câu ${qi+1}. ${q.q}${q.ctx?`<span class="ctx">${q.ctx}</span>`:""}</p><div class="opts">${q.o.map((o,oi)=>`<button data-i="${oi}"><span class="lt">${"ABCD"[oi]}</span><span>${o}</span></button>`).join("")}</div><p class="expl" hidden></p></div>`).join("")}<p class="score" id="score"></p></div></section>
 <div class="finish"><a class="navbtn" href="#${i?L[i-1].id:"trang-chu"}">← ${i?"Bài "+i:"Trang chủ"}</a>
@@ -714,7 +889,7 @@ function logout(){U=null;saveU();loadS();location.hash="trang-chu";route()}
 let GV=null,gvKey="";try{gvKey=sessionStorage.getItem("nckh-gv")||""}catch(e){}
 const SAMPLE={hocSinh:[{maHS:"HS001",hoTen:"Học sinh mẫu 1",lop:"10A1"},{maHS:"HS002",hoTen:"Học sinh mẫu 2",lop:"10A1"},{maHS:"HS003",hoTen:"Học sinh mẫu 3",lop:"10A2"},{maHS:"HS004",hoTen:"Học sinh mẫu 4",lop:"10A2"}],
 tienDo:[[1,1,"2/2"],[1,2,"2/2"],[1,3,"1/2"],[1,4,"2/2"],[1,5,""],[2,1,"1/2"],[2,2,"2/2"],[3,1,"2/2"],[3,2,"2/2"],[3,3,"2/2"],[3,4,"2/2"],[3,5,"2/2"],[3,6,"1/2"],[3,7,"2/2"]].map(([h,b,d],k)=>({maHS:"HS00"+h,bai:b,hoanThanh:"Có",diemKiemTra:d,capNhat:new Date(Date.UTC(2026,9,20+(k%7),2+k)).toISOString()})),
-sanPham:[{maHS:"HS001",bai:1,loai:"cau-hoi",noiDung:"Học sinh lớp 10A1 ngủ dưới 6 tiếng có điểm kiểm tra 15 phút môn Toán thấp hơn bạn ngủ đủ 8 tiếng không?\nTự đánh giá: đạt 5/5 tiêu chí",capNhat:"2026-10-21T03:00:00Z"},{maHS:"HS003",bai:3,loai:"gia-thuyet",noiDung:"Nếu học sinh nghe nhạc không lời khi làm bài thì số câu đúng sẽ tăng vì nhạc không lời giúp giảm căng thẳng.",capNhat:"2026-10-23T08:00:00Z"},{maHS:"HS003",bai:4,loai:"ke-hoach",noiDung:"KẾ HOẠCH NGHIÊN CỨU\nCâu hỏi: Nghe nhạc không lời có giúp làm bài tốt hơn?\nPhương pháp: Thực nghiệm có đối chứng\nCỡ mẫu: 40",capNhat:"2026-10-25T08:00:00Z"}]};
+sanPham:[{maHS:"HS001",bai:1,loai:"cau-hoi",noiDung:"Giải pháp trích xuất đúng bao nhiêu phần trăm câu hỏi, kể cả hình ảnh, từ 30 đề Word môn Toán, Vật lí và Sinh học?\nTự đánh giá: đạt 5/5 tiêu chí",capNhat:"2026-10-21T03:00:00Z"},{maHS:"HS003",bai:3,loai:"gia-thuyet",noiDung:"Nếu giáo viên dùng giải pháp tự động để đưa đề lên hệ thống thì thời gian giảm ít nhất 70% so với nhập thủ công vì hệ thống tự tách câu, phương án, đáp án và hình ảnh.",capNhat:"2026-10-23T08:00:00Z"},{maHS:"HS003",bai:4,loai:"ke-hoach",noiDung:"KẾ HOẠCH NGHIÊN CỨU\nCâu hỏi: Giải pháp trích xuất đúng bao nhiêu phần trăm câu hỏi từ đề Word THPT?\nPhương pháp: Thiết kế, chế tạo và thử nghiệm\nCỡ mẫu: 30",capNhat:"2026-10-25T08:00:00Z"}]};
 function teacherHTML(){
   if(ONLINE&&!GV)return `<span class="phase">Giáo viên</span><h1>Quản lý học sinh</h1>
 <p class="lead">Nhập mã giáo viên (đặt trong file Code.gs) để xem tiến độ và bài nộp của học sinh.</p>
@@ -789,6 +964,7 @@ function nav(cur){
   $("progBar").innerHTML=L.map((l,i)=>`<span class="p${ph(i)}" style="width:12.5%;background:${S.done[l.id]?"var(--ph)":"transparent"}"></span>`).join("");
 }
 function route(){
+  if(typeof MON!=="undefined"&&MON.on){MON.on=false;try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
   const h=location.hash.slice(1),i=L.findIndex(l=>l.id===h),page=$("page");
   if(h==="giao-vien"){page.className="page p0";page.innerHTML=teacherHTML();nav(-2);initTeacher()}
   else if(ONLINE&&!U){page.className="page p0";page.innerHTML=loginHTML();nav(-1);initLogin()}
