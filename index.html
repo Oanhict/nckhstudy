@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sổ tay Nhà nghiên cứu nhí</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700;800&family=Lexend:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 3 chặng màu — Chuẩn bị (xanh dương), Thực hiện (xanh lá), Công bố (cam). Mục lục trái nhóm theo chặng; mỗi trang bài mang màu chặng của nó. */
+:root{
+  --bg:#F2F6FB; --paper:#FFFFFF; --fg:#14213A; --muted:#566178; --line:#D8E0EC;
+  --blue:#1F5FD1; --blue-soft:#E4EDFC; --green:#12895A; --green-soft:#DDF3E9; --orange:#E2660F; --orange-soft:#FDEADB;
+  --bad:#C7362A; --good:#12895A; --onacc:#FFFFFF;
+  --ph:var(--blue); --ph-soft:var(--blue-soft);
+  --display:"Be Vietnam Pro",system-ui,sans-serif; --body:"Lexend",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1424; --paper:#151F36; --fg:#E7EDF8; --muted:#9DABC4; --line:#28365A;
+  --blue:#77A3FF; --blue-soft:#1B2B50; --green:#55D29E; --green-soft:#15352A; --orange:#FF9D52; --orange-soft:#3B2615;
+  --bad:#FF7D6E; --good:#55D29E; --onacc:#0D1424; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1424; --paper:#151F36; --fg:#E7EDF8; --muted:#9DABC4; --line:#28365A;
+  --blue:#77A3FF; --blue-soft:#1B2B50; --green:#55D29E; --green-soft:#15352A; --orange:#FF9D52; --orange-soft:#3B2615;
+  --bad:#FF7D6E; --good:#55D29E; --onacc:#0D1424; color-scheme:dark}
+.p0{--ph:var(--blue);--ph-soft:var(--blue-soft)}
+.p1{--ph:var(--green);--ph-soft:var(--green-soft)}
+.p2{--ph:var(--orange);--ph-soft:var(--orange-soft)}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.7}
+.shell{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:280px minmax(0,1fr);gap:28px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px}
+aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start}
+.brand{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-family:var(--display);font-size:19px;font-weight:800;line-height:1.2}
+.logo{flex:none;width:34px;height:34px;border-radius:10px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;padding:6px;background:var(--paper);border:1px solid var(--line)}
+.logo i{border-radius:3px}
+.logo i:nth-child(1){background:var(--blue)} .logo i:nth-child(2){background:var(--green)} .logo i:nth-child(3){background:var(--orange)} .logo i:nth-child(4){background:var(--line)}
+.brand-sub{font-size:13px;color:var(--muted);margin:0 0 18px 44px}
+.toc{display:grid;gap:2px}
+.toc .grp{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ph);margin:14px 0 4px 10px}
+.toc a{display:grid;grid-template-columns:28px 1fr 18px;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;color:var(--fg);text-decoration:none;font-size:14.5px;line-height:1.35}
+.toc a:hover{background:var(--paper)}
+.toc a.on{background:var(--paper);box-shadow:0 1px 0 var(--line),0 0 0 1px var(--line)}
+.toc .n{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:500;background:var(--ph-soft);color:var(--ph)}
+.toc a.on .n{background:var(--ph);color:var(--onacc)}
+.toc .tick{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line)}
+.toc .tick.done{background:var(--good);border-color:var(--good)}
+.prog{margin-top:20px;font-size:13px;color:var(--muted)}
+.prog .bar{height:8px;background:var(--line);border-radius:4px;margin-top:6px;overflow:hidden;display:flex}
+.prog .bar span{display:block;height:100%;width:0;transition:width .3s}
+.mobnav{display:none}
+main{min-width:0}
+.page{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(20px,4vw,44px);overflow:hidden}
+.phase{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ph);background:var(--ph-soft);border-radius:999px;padding:4px 12px}
+.phase b{font-family:var(--mono);font-weight:500}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4.6vw,42px);line-height:1.18;letter-spacing:-.01em;margin:12px 0 10px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.3;margin:36px 0 10px;text-wrap:balance}
+h3{font-size:17px;margin:22px 0 6px}
+p,li{max-width:68ch}
+.lead{font-size:17.5px;color:var(--muted)}
+mark{background:var(--orange-soft);color:inherit;padding:0 4px;border-radius:4px}
+code{font-family:var(--mono);font-size:.88em;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.goal{background:var(--ph-soft);border-radius:14px;padding:16px 20px;margin:20px 0}
+.goal b{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ph);margin-bottom:4px}
+.goal ul{margin:0;padding-left:18px}
+.case{border:2px dashed var(--ph);border-radius:14px;padding:16px 20px;margin:24px 0;background:var(--paper)}
+.case .lbl{display:inline-block;font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ph)}
+.case p{margin:6px 0 0}
+.tbl{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px;background:var(--paper)}
+th,td{border-bottom:1px solid var(--line);padding:9px 14px;text-align:left;vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--ph-soft);font-weight:600;color:var(--fg)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.cmp>div{min-width:0;border-radius:12px;padding:12px 16px;border:1.5px solid var(--line)}
+.cmp .x{border-color:var(--bad)} .cmp .o{border-color:var(--good)}
+.cmp .x b{color:var(--bad)} .cmp .o b{color:var(--good)}
+.cmp p{margin:4px 0 0}
+.lab{margin-top:38px}
+.lab-h{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:19px;margin-bottom:10px}
+.lab-h::before{content:"";width:12px;height:12px;border-radius:4px;background:var(--ph)}
+.tool{background:var(--bg);border-radius:14px;padding:20px;display:grid;gap:12px}
+label.f{display:grid;gap:4px;font-size:14px;font-weight:500}
+input[type=text],input[type=number],textarea,select{font:inherit;font-size:15px;color:var(--fg);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--ph);outline:none}
+textarea{min-height:76px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row>*{min-width:0}
+.btn{font:600 14.5px var(--body);background:var(--blue);color:var(--onacc);border:0;border-radius:10px;padding:10px 18px;cursor:pointer;justify-self:start}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--blue)}
+.btn.isdone{background:var(--green)}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.out{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.ok{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:15px;cursor:pointer}
+.chk input{margin-top:5px;accent-color:var(--green);width:17px;height:17px;flex:none}
+.quiz{display:grid;gap:14px}
+.q{background:var(--bg);border-radius:14px;padding:18px 20px}
+.q p.qt{font-weight:600;margin:0 0 10px}
+.opts{display:grid;gap:8px}
+.opts button{font:inherit;font-size:15px;text-align:left;background:var(--paper);color:var(--fg);border:1.5px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer}
+.opts button:hover{border-color:var(--blue)}
+.opts button.right{border-color:var(--good);background:var(--green-soft)}
+.opts button.wrong{border-color:var(--bad)}
+.expl{margin:10px 0 0;font-size:14.5px}
+.finish{margin-top:32px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px}
+.navbtn{font:600 14px var(--body);color:var(--blue);text-decoration:none}
+/* trang chủ */
+.hero{margin:calc(-1 * clamp(20px,4vw,44px));margin-bottom:0;padding:clamp(24px,4.5vw,48px) clamp(20px,4vw,44px);background:var(--blue);color:var(--onacc);position:relative}
+.hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.hero h1{margin:10px 0 10px;color:var(--onacc)}
+.hero p{margin:0;max-width:60ch;font-size:17px;opacity:.92}
+.hero .stripe{position:absolute;left:0;right:0;bottom:0;height:8px;display:grid;grid-template-columns:3fr 3fr 2fr}
+.hero .stripe i:nth-child(1){background:var(--blue);filter:brightness(1.25)} .hero .stripe i:nth-child(2){background:var(--green)} .hero .stripe i:nth-child(3){background:var(--orange)}
+.phases{display:grid;grid-template-columns:3fr 3fr 2fr;gap:12px;margin:28px 0 8px}
+.phases>div{min-width:0;border-radius:14px;padding:14px 16px;background:var(--ph-soft)}
+.phases b{display:block;color:var(--ph);font-size:15px}
+.phases span{font-size:13.5px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:18px 0}
+.card{display:grid;align-content:start;gap:6px;background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:16px;text-decoration:none;color:var(--fg);transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--ph);transform:translateY(-2px)}
+.card .top{display:flex;justify-content:space-between;align-items:center}
+.card .n{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:var(--mono);font-size:13px;background:var(--ph);color:var(--onacc)}
+.card .st{font-size:12px;font-weight:600;color:var(--good)}
+.card b{font-size:16px;line-height:1.35}
+.card span.d{font-size:13.5px;color:var(--muted);line-height:1.5}
+.flip{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.flip details{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px}
+.flip details[open]{border-color:var(--ph)}
+.flip summary{cursor:pointer;font-weight:600;font-size:15px}
+.flip p{font-size:14.5px;margin:8px 0 0}
+.chart{overflow-x:auto}
+.chart svg{display:block;max-width:100%}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  aside{display:none}
+  .mobnav{display:grid;gap:8px;margin-bottom:14px}
+  .row,.cmp,.phases{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside>
+    <p class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Sổ tay Nhà nghiên cứu nhí</p>
+    <p class="brand-sub">8 bài học kỹ năng nghiên cứu khoa học</p>
+    <nav class="toc" id="toc"></nav>
+    <div class="prog"><span id="progText">Đã hoàn thành 0/8 bài</span><div class="bar" id="progBar"></div></div>
+  </aside>
+  <main>
+    <div class="mobnav">
+      <label class="f" for="mobsel">Chọn bài học
+        <select id="mobsel"></select>
+      </label>
+    </div>
+    <article class="page" id="page"></article>
+  </main>
+</div>
+
+<script>
+const CASE = "Ứng dụng nhắc học trên điện thoại có giúp học sinh lớp 10 nộp bài tập về nhà đúng hạn hơn không?";
+const L = [
+{id:"bai-1",t:"Đặt câu hỏi nghiên cứu",d:"Từ điều em tò mò đến một câu hỏi trả lời được bằng dữ liệu",
+goals:["Phân biệt chủ đề, vấn đề và câu hỏi nghiên cứu","Biết 5 tiêu chí của một câu hỏi tốt","Tự viết được câu hỏi nghiên cứu cho đề tài của mình"],
+body:`
+<h2>Mọi nghiên cứu bắt đầu từ một quan sát</h2>
+<p>Nhà khoa học không bắt đầu bằng câu trả lời. Họ bắt đầu bằng một điều khiến họ thắc mắc: <mark>Vì sao? Bao nhiêu? Điều gì sẽ xảy ra nếu…?</mark> Hãy để ý những điều lặp đi lặp lại quanh em: ở lớp học, ở nhà, trên điện thoại.</p>
+<h3>Ba tầng: chủ đề → vấn đề → câu hỏi</h3>
+<div class="tbl"><table>
+<tr><th>Tầng</th><th>Ví dụ</th><th>Đặc điểm</th></tr>
+<tr><td>Chủ đề</td><td>Công nghệ trong học tập</td><td>Rất rộng, chưa nghiên cứu được</td></tr>
+<tr><td>Vấn đề</td><td>Nhiều bạn lớp 10 hay quên nộp bài tập về nhà</td><td>Một điều chưa ổn có thể quan sát được</td></tr>
+<tr><td>Câu hỏi</td><td>Ứng dụng nhắc học có giúp tăng tỉ lệ nộp bài đúng hạn không?</td><td>Cụ thể, trả lời được bằng dữ liệu</td></tr>
+</table></div>
+<h3>5 tiêu chí của một câu hỏi tốt</h3>
+<ol>
+<li><b>Cụ thể:</b> nói rõ đối tượng nào, ở đâu, điều gì.</li>
+<li><b>Đo được:</b> có thể đếm, đo hoặc ghi nhận bằng số liệu hay quan sát.</li>
+<li><b>Khả thi:</b> em làm được trong vài tuần, với dụng cụ và chi phí sẵn có.</li>
+<li><b>Chưa có đáp án sẵn:</b> không tra Google là ra ngay.</li>
+<li><b>Có ý nghĩa:</b> câu trả lời giúp ích cho ai đó.</li>
+</ol>
+<div class="cmp">
+<div class="x"><b>Chưa tốt</b><p>"Điện thoại có tốt cho học sinh không?"<br>Quá rộng. "Tốt" là tốt về mặt nào? Đo bằng cách nào?</p></div>
+<div class="o"><b>Tốt hơn</b><p>"Học sinh lớp 10A dùng điện thoại hơn 2 giờ mỗi tối có điểm kiểm tra 15 phút môn Toán thấp hơn bạn dùng dưới 1 giờ không?"</p></div>
+</div>
+<h3>Các dạng câu hỏi thường gặp</h3>
+<ul>
+<li><b>Mô tả:</b> Bao nhiêu phần trăm học sinh…? (khảo sát)</li>
+<li><b>So sánh:</b> Nhóm A có khác nhóm B không? (thí nghiệm, đối chứng)</li>
+<li><b>Quan hệ:</b> Khi X tăng thì Y có thay đổi không? (tương quan)</li>
+<li><b>Thiết kế, chế tạo:</b> Làm thế nào để tạo ra… có hiệu quả hơn…? (dự án kỹ thuật, phần mềm)</li>
+</ul>`,
+caseText:`Quan sát: trong lớp 10A, mỗi tuần có khoảng 8 đến 10 bạn quên nộp bài. Câu hỏi nghiên cứu: <b>${CASE}</b>`,
+tool:"question",
+quiz:[
+{q:"Câu nào là câu hỏi nghiên cứu tốt nhất?",o:["Mạng xã hội có hại không?","Học sinh có thích học online không?","Học sinh lớp 11 trường em ngủ trung bình bao nhiêu giờ vào đêm trước ngày thi?","Tại sao bầu trời màu xanh?"],a:2,e:"Câu này cụ thể (lớp 11, trường em, đêm trước thi), đo được (số giờ ngủ) và khả thi. Câu 4 đã có đáp án trong sách giáo khoa."},
+{q:"\"Làm thế nào để thiết kế ứng dụng giúp học sinh học từ vựng tiếng Anh nhớ lâu hơn?\" thuộc dạng câu hỏi nào?",o:["Mô tả","So sánh","Thiết kế, chế tạo","Quan hệ"],a:2,e:"Câu hỏi hướng tới tạo ra một sản phẩm. Đây là dạng phổ biến ở lĩnh vực phần mềm và hệ thống nhúng trong cuộc thi khoa học kỹ thuật."}
+]},
+{id:"bai-2",t:"Tìm và đánh giá tài liệu",d:"Biết người khác đã tìm ra gì, và nguồn nào đáng tin",
+goals:["Biết tìm tài liệu bằng Google Scholar và từ khóa phù hợp","Đánh giá độ tin cậy của nguồn bằng bộ tiêu chí CRAAP","Trích dẫn nguồn đúng chuẩn APA"],
+body:`
+<h2>Vì sao phải đọc tài liệu?</h2>
+<p>Để không làm lại điều người khác đã làm, để học cách họ đo lường, và để tìm ra <mark>khoảng trống</mark>: điều chưa ai trả lời, hoặc chưa ai trả lời cho học sinh Việt Nam.</p>
+<h3>Tìm ở đâu?</h3>
+<ul>
+<li><b>Google Scholar</b> (scholar.google.com): bài báo khoa học. Thử tìm bằng cả tiếng Anh, ví dụ <code>homework reminder app students</code>.</li>
+<li><b>Sách giáo khoa và sách chuyên khảo</b> ở thư viện trường.</li>
+<li><b>Trang của cơ quan chính thức:</b> Bộ Giáo dục và Đào tạo, Tổng cục Thống kê, WHO.</li>
+<li><b>Báo cáo các đề tài khoa học kỹ thuật</b> những năm trước.</li>
+</ul>
+<h3>Mẹo tìm kiếm</h3>
+<div class="tbl"><table>
+<tr><th>Cách viết</th><th>Tác dụng</th></tr>
+<tr><td><code>"ứng dụng nhắc nhở"</code></td><td>Tìm đúng cụm từ trong ngoặc kép</td></tr>
+<tr><td><code>học sinh -đại học</code></td><td>Loại các kết quả có chữ "đại học"</td></tr>
+<tr><td><code>site:edu.vn</code></td><td>Chỉ tìm trên trang của các trường</td></tr>
+<tr><td><code>filetype:pdf</code></td><td>Chỉ tìm file PDF (thường là báo cáo)</td></tr>
+</table></div>
+<h3>Đánh giá nguồn bằng bộ tiêu chí CRAAP</h3>
+<ul>
+<li><b>Currency (Mới):</b> xuất bản khi nào? Với công nghệ, nguồn trên 5 năm có thể đã cũ.</li>
+<li><b>Relevance (Liên quan):</b> có đúng đối tượng, đúng câu hỏi của em không?</li>
+<li><b>Authority (Uy tín):</b> tác giả là ai? Thuộc tổ chức nào?</li>
+<li><b>Accuracy (Chính xác):</b> có số liệu, có trích dẫn, có thể kiểm chứng không?</li>
+<li><b>Purpose (Mục đích):</b> viết để thông tin hay để bán hàng, quảng cáo?</li>
+</ul>
+<h3>Ghi chép và trích dẫn</h3>
+<p>Mỗi tài liệu đọc xong, ghi 3 dòng: <i>Họ hỏi gì? Họ làm thế nào? Họ tìm ra gì?</i> Dùng ý của người khác thì <b>phải ghi nguồn</b>; không ghi nguồn là đạo văn.</p>`,
+caseText:`Em tìm thấy một nghiên cứu nước ngoài cho thấy tin nhắn nhắc nhở giúp sinh viên đại học nộp bài đúng hạn hơn. Khoảng trống: chưa có nghiên cứu nào với học sinh THPT Việt Nam dùng ứng dụng nhắc học.`,
+tool:"source",
+quiz:[
+{q:"Nguồn nào đáng tin cậy nhất cho đề tài về giấc ngủ của học sinh?",o:["Bài đăng của một trang bán thực phẩm chức năng","Bài báo khoa học trên tạp chí, có số liệu và tài liệu tham khảo","Video TikTok có 2 triệu lượt xem","Bình luận trên diễn đàn"],a:1,e:"Bài báo khoa học đạt cả 5 tiêu chí CRAAP. Trang bán hàng có mục đích quảng cáo; số lượt xem không phải bằng chứng."},
+{q:"Em chép một đoạn giải thích từ Wikipedia vào báo cáo và không ghi nguồn. Đó là:",o:["Bình thường, vì Wikipedia miễn phí","Đạo văn","Tóm tắt","Trích dẫn"],a:1,e:"Dùng lời hay ý của người khác mà không ghi nguồn là đạo văn, dù nguồn đó miễn phí. Hãy viết lại bằng lời của em và ghi nguồn."}
+]},
+{id:"bai-3",t:"Giả thuyết và các biến",d:"Dự đoán có căn cứ, và biết cái gì thay đổi, cái gì được đo",
+goals:["Viết giả thuyết theo mẫu Nếu… thì… vì…","Phân biệt biến độc lập, biến phụ thuộc và biến kiểm soát","Hiểu vì sao cần nhóm đối chứng"],
+body:`
+<h2>Giả thuyết là một dự đoán có thể kiểm chứng</h2>
+<p>Giả thuyết không phải là đoán bừa. Nó dựa trên những gì em đã đọc ở bài 2. Mẫu câu dễ dùng:</p>
+<p class="out"><b>Nếu</b> [em thay đổi điều gì] <b>thì</b> [điều gì sẽ xảy ra, đo bằng gì] <b>vì</b> [lý do dựa trên tài liệu].</p>
+<p>Một giả thuyết tốt phải <mark>có thể sai</mark>. Nếu không có kết quả nào có thể bác bỏ nó, đó không phải là giả thuyết khoa học.</p>
+<h3>Ba loại biến</h3>
+<div class="tbl"><table>
+<tr><th>Biến</th><th>Là gì</th><th>Trong đề tài mẫu</th></tr>
+<tr><td><b>Độc lập</b></td><td>Điều em chủ động thay đổi</td><td>Có hay không dùng ứng dụng nhắc học</td></tr>
+<tr><td><b>Phụ thuộc</b></td><td>Điều em đo để xem có thay đổi không</td><td>Tỉ lệ bài tập nộp đúng hạn</td></tr>
+<tr><td><b>Kiểm soát</b></td><td>Điều phải giữ giống nhau giữa các nhóm</td><td>Cùng khối lớp, cùng số bài tập, cùng giáo viên, cùng thời gian</td></tr>
+</table></div>
+<h3>Nhóm thực nghiệm và nhóm đối chứng</h3>
+<p>Nếu chỉ cho cả lớp dùng ứng dụng rồi thấy tỉ lệ nộp bài tăng, em chưa biết được là nhờ ứng dụng hay nhờ… sắp kiểm tra giữa kỳ. Vì vậy cần <b>nhóm đối chứng</b>: một nhóm tương tự nhưng không dùng ứng dụng. Chia nhóm <b>ngẫu nhiên</b> (bốc thăm) để hai nhóm giống nhau nhất có thể.</p>`,
+caseText:`Giả thuyết: <b>Nếu</b> học sinh lớp 10 dùng ứng dụng nhắc học trong 4 tuần <b>thì</b> tỉ lệ bài tập nộp đúng hạn sẽ cao hơn nhóm không dùng, <b>vì</b> các nghiên cứu cho thấy lời nhắc đúng lúc giúp giảm việc quên.`,
+tool:"vars",
+quiz:[
+{q:"Em thử tưới cây đậu bằng 3 lượng nước khác nhau và đo chiều cao sau 2 tuần. Biến phụ thuộc là:",o:["Lượng nước","Chiều cao cây","Loại đất","Ánh sáng"],a:1,e:"Chiều cao cây là điều em đo. Lượng nước là biến độc lập; đất và ánh sáng là biến kiểm soát."},
+{q:"Vì sao cần nhóm đối chứng?",o:["Để có nhiều số liệu hơn","Để so sánh, loại trừ khả năng kết quả do yếu tố khác gây ra","Để làm báo cáo dài hơn","Không cần thiết"],a:1,e:"Nhóm đối chứng cho em biết điều gì sẽ xảy ra nếu không có tác động. Chênh lệch giữa hai nhóm mới là hiệu quả thật."}
+]},
+{id:"bai-4",t:"Thiết kế phương pháp",d:"Chọn cách làm, chọn mẫu, và nghiên cứu một cách có đạo đức",
+goals:["Chọn phương pháp phù hợp với dạng câu hỏi","Hiểu mẫu nghiên cứu và vì sao cỡ mẫu quan trọng","Biết các nguyên tắc đạo đức khi nghiên cứu với con người"],
+body:`
+<h2>Câu hỏi nào, phương pháp nấy</h2>
+<div class="tbl"><table>
+<tr><th>Phương pháp</th><th>Dùng khi</th><th>Ví dụ</th></tr>
+<tr><td>Thực nghiệm</td><td>Muốn biết A có <i>gây ra</i> B không</td><td>Chia 2 nhóm, một nhóm dùng ứng dụng</td></tr>
+<tr><td>Khảo sát (phiếu hỏi)</td><td>Muốn biết <i>bao nhiêu, mức độ</i> trên nhiều người</td><td>Hỏi 120 học sinh về thói quen làm bài</td></tr>
+<tr><td>Phỏng vấn</td><td>Muốn hiểu <i>vì sao</i>, cảm nhận sâu</td><td>Hỏi 6 bạn vì sao hay quên nộp bài</td></tr>
+<tr><td>Quan sát</td><td>Muốn ghi nhận hành vi thật</td><td>Đếm số bạn dùng điện thoại giờ ra chơi</td></tr>
+<tr><td>Thiết kế, chế tạo</td><td>Tạo sản phẩm rồi đánh giá</td><td>Viết ứng dụng rồi cho người dùng thử</td></tr>
+</table></div>
+<h3>Mẫu nghiên cứu</h3>
+<p>Em không thể hỏi mọi học sinh Việt Nam. Em chọn một <b>mẫu</b>, tức một nhóm nhỏ đại diện. Mẫu càng lớn và chọn càng ngẫu nhiên, kết luận càng đáng tin. Với đề tài học sinh, mỗi nhóm nên có <mark>ít nhất khoảng 30 người</mark> nếu có thể; nếu ít hơn, hãy nói rõ đây là hạn chế.</p>
+<h3>Thiết kế phiếu khảo sát</h3>
+<ul>
+<li>Mỗi câu chỉ hỏi một ý. Tránh: "Em thấy ứng dụng nhanh và đẹp không?"</li>
+<li>Không hỏi dẫn dắt. Tránh: "Em có đồng ý ứng dụng rất hữu ích không?"</li>
+<li>Dùng thang 1–5 (thang Likert) để đo mức độ.</li>
+<li>Cho 2–3 bạn làm thử trước để phát hiện câu khó hiểu.</li>
+</ul>
+<h3>Đạo đức nghiên cứu</h3>
+<ul>
+<li><b>Tự nguyện:</b> người tham gia được giải thích và đồng ý; với học sinh dưới 18 tuổi cần cả sự đồng ý của phụ huynh hoặc giáo viên.</li>
+<li><b>Bảo mật:</b> không công bố tên; dùng mã số như HS01, HS02.</li>
+<li><b>Không gây hại:</b> không để nhóm nào bị thiệt, ví dụ sau nghiên cứu cho nhóm đối chứng dùng ứng dụng.</li>
+<li><b>Trung thực:</b> không sửa, không bịa số liệu.</li>
+</ul>`,
+caseText:`Phương pháp: thực nghiệm có đối chứng. 60 học sinh hai lớp 10, bốc thăm chia thành 2 nhóm 30 bạn. Trong 4 tuần, nhóm thực nghiệm dùng ứng dụng, nhóm đối chứng học như bình thường. Giáo viên ghi lại việc nộp bài. Có phiếu đồng ý của phụ huynh. Sau nghiên cứu, nhóm đối chứng cũng được dùng ứng dụng.`,
+tool:"plan",
+quiz:[
+{q:"Em muốn biết \"vì sao học sinh ngại hỏi bài thầy cô\". Phương pháp phù hợp nhất là:",o:["Thực nghiệm","Phỏng vấn","Đếm số câu hỏi","Đo nhiệt độ lớp học"],a:1,e:"Câu hỏi \"vì sao\" cần hiểu suy nghĩ, cảm nhận, nên phỏng vấn sâu là phù hợp. Có thể kết hợp khảo sát để biết mức độ phổ biến."},
+{q:"Câu hỏi khảo sát nào viết tốt nhất?",o:["Em có thấy ứng dụng tuyệt vời không?","Ứng dụng nhanh, đẹp và dễ dùng chứ?","Mức độ dễ sử dụng của ứng dụng (1 = rất khó, 5 = rất dễ)","Em không thấy ứng dụng khó dùng phải không?"],a:2,e:"Câu này hỏi một ý, không dẫn dắt và có thang đo rõ ràng. Câu 4 dùng phủ định kép, gây khó hiểu."}
+]},
+{id:"bai-5",t:"Thu thập dữ liệu",d:"Ghi chép cẩn thận, trung thực, có hệ thống",
+goals:["Lập bảng ghi số liệu trước khi bắt đầu","Giữ nhật ký nghiên cứu","Biết xử lý số liệu bất thường một cách trung thực"],
+body:`
+<h2>Chuẩn bị bảng số liệu trước</h2>
+<p>Đừng đợi đến lúc làm mới nghĩ sẽ ghi gì. Lập bảng trên Google Sheets hoặc Excel từ trước, <mark>mỗi dòng là một lần đo, mỗi cột là một thông tin</mark>.</p>
+<div class="tbl"><table>
+<tr><th>Mã HS</th><th>Nhóm</th><th>Tuần</th><th>Số bài được giao</th><th>Số bài nộp đúng hạn</th><th>Ghi chú</th></tr>
+<tr><td>HS01</td><td>Thực nghiệm</td><td>1</td><td>5</td><td>5</td><td></td></tr>
+<tr><td>HS02</td><td>Đối chứng</td><td>1</td><td>5</td><td>3</td><td>Nghỉ ốm 1 ngày</td></tr>
+<tr><td>HS03</td><td>Thực nghiệm</td><td>1</td><td>5</td><td>4</td><td></td></tr>
+</table></div>
+<h3>Nhật ký nghiên cứu</h3>
+<p>Mỗi buổi làm, ghi lại: ngày giờ, việc đã làm, điều bất thường, ý tưởng mới. Nhà khoa học thật cũng làm vậy. Nhật ký là bằng chứng em đã thực sự làm nghiên cứu, và giúp em viết báo cáo nhanh hơn nhiều.</p>
+<h3>Những lỗi hay gặp</h3>
+<ul>
+<li><b>Đo không nhất quán:</b> tuần này đếm bài nộp trước 7 giờ, tuần sau đếm trước 9 giờ.</li>
+<li><b>Bỏ số liệu "xấu":</b> bỏ đi kết quả không khớp với giả thuyết là <b>không trung thực</b>. Nếu loại bỏ, phải có lý do rõ ràng và ghi vào báo cáo.</li>
+<li><b>Chỉ ghi nhớ trong đầu:</b> ghi ngay, ghi đầy đủ.</li>
+<li><b>Không sao lưu:</b> lưu bản sao ở ít nhất hai nơi.</li>
+</ul>
+<h3>Lặp lại</h3>
+<p>Một lần đo có thể ngẫu nhiên đúng. Đo nhiều lần, nhiều người, nhiều tuần giúp kết quả đáng tin hơn.</p>`,
+caseText:`Mỗi thứ Sáu, giáo viên bộ môn gửi danh sách bài đã nộp. Em nhập vào Google Sheets theo mẫu ở trên và ghi nhật ký. Tuần 3 có 2 bạn nhóm thực nghiệm bị hỏng điện thoại: em ghi lại và vẫn giữ số liệu của các bạn ấy, rồi nêu điều này trong báo cáo.`,
+tool:"journal",
+quiz:[
+{q:"Kết quả tuần 2 không đúng như giả thuyết. Em nên:",o:["Xóa tuần 2 đi","Sửa số cho đẹp hơn","Giữ nguyên, ghi lại và tìm hiểu nguyên nhân","Làm lại cho tới khi đúng giả thuyết"],a:2,e:"Kết quả trái giả thuyết vẫn là kết quả khoa học có giá trị. Sửa hay xóa số liệu là gian lận."},
+{q:"Cách tổ chức bảng số liệu tốt là:",o:["Mỗi dòng là một lần đo, mỗi cột là một thông tin","Ghi tất cả vào một ô","Mỗi bạn một file riêng","Ghi trong vở rồi nhớ"],a:0,e:"Bảng có cấu trúc dạng này giúp tính toán và vẽ biểu đồ dễ dàng ở bài 6."}
+]},
+{id:"bai-6",t:"Phân tích dữ liệu",d:"Biến những con số thành câu trả lời",
+goals:["Tính và hiểu trung bình, trung vị, độ lệch chuẩn","Chọn biểu đồ phù hợp","Phân biệt tương quan và nhân quả"],
+body:`
+<h2>Các con số mô tả cơ bản</h2>
+<div class="tbl"><table>
+<tr><th>Đại lượng</th><th>Ý nghĩa</th><th>Khi nào dùng</th></tr>
+<tr><td>Trung bình</td><td>Tổng chia số lượng</td><td>Số liệu không có giá trị quá lệch</td></tr>
+<tr><td>Trung vị</td><td>Giá trị ở giữa khi xếp theo thứ tự</td><td>Có vài giá trị rất lớn hoặc rất nhỏ</td></tr>
+<tr><td>Độ lệch chuẩn</td><td>Số liệu phân tán quanh trung bình nhiều hay ít</td><td>Luôn báo cáo kèm trung bình</td></tr>
+</table></div>
+<p>Trong Google Sheets: <code>=AVERAGE(B2:B31)</code>, <code>=MEDIAN(B2:B31)</code>, <code>=STDEV(B2:B31)</code>.</p>
+<h3>Chọn biểu đồ</h3>
+<ul>
+<li><b>Cột:</b> so sánh các nhóm (nhóm thực nghiệm và nhóm đối chứng).</li>
+<li><b>Đường:</b> thay đổi theo thời gian (tuần 1 đến tuần 4).</li>
+<li><b>Tròn:</b> tỉ lệ các phần của một tổng; chỉ nên dùng khi có ít phần.</li>
+<li><b>Điểm (phân tán):</b> mối quan hệ giữa hai đại lượng.</li>
+</ul>
+<p>Biểu đồ nào cũng phải có tên, tên trục, đơn vị và số lượng mẫu (n).</p>
+<h3>Tương quan không phải là nhân quả</h3>
+<p>Ví dụ: ở các thành phố bán nhiều kem hơn thì có nhiều vụ đuối nước hơn. Kem không gây đuối nước. Cả hai cùng tăng vì <mark>trời nóng</mark>. Chỉ thực nghiệm có đối chứng và chia nhóm ngẫu nhiên mới giúp kết luận gần với nhân quả.</p>
+<h3>Chênh lệch có đủ lớn không?</h3>
+<p>Hai nhóm luôn khác nhau một chút do ngẫu nhiên. Nếu chênh lệch nhỏ hơn nhiều so với độ lệch chuẩn, hãy thận trọng khi kết luận. Ở bậc cao hơn, em sẽ học các phép kiểm định thống kê như t-test để trả lời câu hỏi này chính xác.</p>`,
+caseText:`Sau 4 tuần, nhóm thực nghiệm nộp đúng hạn trung bình 88% số bài, nhóm đối chứng 71%. Dùng công cụ bên dưới với số liệu mẫu để xem hai nhóm khác nhau thế nào.`,
+tool:"stats",
+quiz:[
+{q:"Điểm của 5 bạn: 6, 7, 7, 8, 10. Trung vị là:",o:["7","7,6","8","10"],a:0,e:"Xếp theo thứ tự rồi lấy giá trị ở giữa (vị trí thứ 3) là 7. Trung bình là 38 : 5 = 7,6."},
+{q:"Học sinh ngủ nhiều hơn có điểm cao hơn. Kết luận đúng là:",o:["Ngủ nhiều chắc chắn làm điểm cao hơn","Có mối tương quan; cần thêm nghiên cứu để biết có quan hệ nhân quả không","Điểm cao làm bạn ngủ nhiều hơn","Không có ý nghĩa gì"],a:1,e:"Đây là tương quan. Có thể có yếu tố thứ ba, ví dụ bạn ít áp lực thì vừa ngủ ngon vừa học tốt."}
+]},
+{id:"bai-7",t:"Viết báo cáo khoa học",d:"Cấu trúc IMRaD và cách viết rõ ràng, trung thực",
+goals:["Nắm cấu trúc của một báo cáo khoa học","Viết tóm tắt trong khoảng 250 từ","Biết trình bày hạn chế của nghiên cứu"],
+body:`
+<h2>Cấu trúc IMRaD</h2>
+<p>Hầu hết bài báo khoa học trên thế giới theo cấu trúc này. Báo cáo dự thi khoa học kỹ thuật cũng tương tự.</p>
+<div class="tbl"><table>
+<tr><th>Phần</th><th>Trả lời câu hỏi</th><th>Gợi ý độ dài</th></tr>
+<tr><td>Tóm tắt (Abstract)</td><td>Toàn bộ nghiên cứu trong một đoạn</td><td>150–250 từ</td></tr>
+<tr><td>Đặt vấn đề (Introduction)</td><td>Vì sao nghiên cứu? Người khác đã biết gì? Câu hỏi và giả thuyết là gì?</td><td>1–2 trang</td></tr>
+<tr><td>Phương pháp (Methods)</td><td>Em đã làm như thế nào? (đủ chi tiết để người khác làm lại được)</td><td>1–2 trang</td></tr>
+<tr><td>Kết quả (Results)</td><td>Em tìm thấy gì? (số liệu, bảng, biểu đồ; chưa bình luận)</td><td>1–3 trang</td></tr>
+<tr><td>Thảo luận (Discussion)</td><td>Kết quả có ý nghĩa gì? So với nghiên cứu khác ra sao? Hạn chế là gì?</td><td>1–2 trang</td></tr>
+<tr><td>Kết luận và Tài liệu tham khảo</td><td>Trả lời câu hỏi nghiên cứu; hướng phát triển; danh sách nguồn</td><td>0,5 trang</td></tr>
+</table></div>
+<h3>Mẫu tóm tắt 5 câu</h3>
+<ol>
+<li>Vấn đề: … là một vấn đề vì …</li>
+<li>Mục tiêu: Nghiên cứu này nhằm …</li>
+<li>Phương pháp: Chúng em đã … với … người trong … tuần.</li>
+<li>Kết quả: Kết quả cho thấy … (có con số).</li>
+<li>Ý nghĩa: Điều này gợi ý rằng …</li>
+</ol>
+<h3>Viết như nhà khoa học</h3>
+<ul>
+<li>Câu ngắn, rõ ràng; mỗi đoạn một ý.</li>
+<li>Dùng số liệu thay cho tính từ: "tăng 17 điểm phần trăm" thay cho "tăng rất nhiều".</li>
+<li>Không phóng đại: viết "kết quả gợi ý" thay cho "đã chứng minh".</li>
+<li>Nêu hạn chế một cách thẳng thắn. Hội đồng đánh giá cao điều này.</li>
+</ul>`,
+caseText:`Hạn chế được nêu trong báo cáo mẫu: chỉ có 60 học sinh từ một trường; nghiên cứu kéo dài 4 tuần, chưa biết hiệu quả có duy trì lâu dài không; học sinh biết mình đang được nghiên cứu nên có thể cố gắng hơn bình thường.`,
+tool:"imrad",
+quiz:[
+{q:"Câu \"Nhóm thực nghiệm nộp đúng hạn 88% số bài, nhóm đối chứng 71%\" thuộc phần nào?",o:["Đặt vấn đề","Phương pháp","Kết quả","Tài liệu tham khảo"],a:2,e:"Đây là số liệu em tìm được, chưa bình luận, nên thuộc phần Kết quả."},
+{q:"Câu nào viết theo phong cách khoa học hơn?",o:["Ứng dụng đã chứng minh hoàn toàn hiệu quả tuyệt vời","Kết quả gợi ý ứng dụng giúp tăng tỉ lệ nộp bài đúng hạn khoảng 17 điểm phần trăm trong 4 tuần","Ai cũng thích ứng dụng","Ứng dụng rất rất tốt"],a:1,e:"Câu này có số liệu, có phạm vi (4 tuần) và dùng từ thận trọng (\"gợi ý\")."}
+]},
+{id:"bai-8",t:"Trình bày và bảo vệ",d:"Poster, thuyết trình và trả lời câu hỏi của hội đồng",
+goals:["Thiết kế poster dễ đọc từ xa","Thuyết trình đề tài trong 5 phút","Chuẩn bị trả lời các câu hỏi thường gặp"],
+body:`
+<h2>Poster khoa học</h2>
+<ul>
+<li>Bố cục 3 cột, đọc từ trái sang phải, từ trên xuống dưới.</li>
+<li>Tên đề tài đọc được từ cách xa 3 mét. Chữ nội dung không nhỏ hơn cỡ 24.</li>
+<li>Nhiều hình và biểu đồ, ít chữ. Mỗi đoạn không quá 50 từ.</li>
+<li>Kết quả chính đặt ở vị trí nổi bật nhất.</li>
+<li>Dùng tối đa 2–3 màu, đủ tương phản.</li>
+</ul>
+<h2>Thuyết trình 5 phút</h2>
+<div class="tbl"><table>
+<tr><th>Thời gian</th><th>Nội dung</th></tr>
+<tr><td>0:00–0:45</td><td>Mở đầu bằng vấn đề, một con số hoặc một tình huống quen thuộc</td></tr>
+<tr><td>0:45–1:30</td><td>Câu hỏi nghiên cứu và giả thuyết</td></tr>
+<tr><td>1:30–2:45</td><td>Phương pháp (dùng sơ đồ)</td></tr>
+<tr><td>2:45–4:15</td><td>Kết quả (1–2 biểu đồ quan trọng nhất)</td></tr>
+<tr><td>4:15–5:00</td><td>Kết luận, hạn chế, hướng phát triển</td></tr>
+</table></div>
+<p>Luyện tập trước gương, trước bạn bè và bấm giờ. Nói với hội đồng như đang kể một câu chuyện, đừng đọc thuộc lòng.</p>
+<h3>Khi không biết câu trả lời</h3>
+<p>Hãy thành thật: "Em chưa tìm hiểu điều này, đây là một hướng rất hay để em nghiên cứu tiếp." Bịa câu trả lời là điều hội đồng dễ nhận ra nhất.</p>`,
+caseText:`Câu mở đầu thuyết trình của đề tài mẫu: "Mỗi tuần, lớp em có khoảng 10 bạn quên nộp bài tập. Chúng em tự hỏi: một chiếc điện thoại, thứ thường bị coi là gây xao nhãng, có thể giúp các bạn nhớ bài không?"`,
+tool:"defense",
+quiz:[
+{q:"Phần nào nên nổi bật nhất trên poster?",o:["Danh sách tài liệu tham khảo","Kết quả chính","Tên người hướng dẫn","Lời cảm ơn"],a:1,e:"Người xem thường chỉ dừng lại vài giây. Kết quả chính là điều họ cần thấy ngay."},
+{q:"Hội đồng hỏi một điều em chưa nghiên cứu. Em nên:",o:["Trả lời đại cho xong","Im lặng","Thành thật nói chưa tìm hiểu, và xem đó là hướng nghiên cứu tiếp","Chuyển sang chủ đề khác"],a:2,e:"Trung thực là phẩm chất quan trọng nhất của nhà nghiên cứu. Hội đồng đánh giá cao câu trả lời này."}
+]}
+];
+
+/* ---------- state ---------- */
+const KEY="nckh-hocsinh-v1";
+let S={done:{},journal:""};
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id);
+
+/* ---------- tools ---------- */
+const TOOLS={
+question:{html:`
+<label class="f" for="qIn">Câu hỏi nghiên cứu của em<textarea id="qIn" placeholder="Ví dụ: Học sinh lớp 10A dùng điện thoại hơn 2 giờ mỗi tối có điểm Toán thấp hơn không?"></textarea></label>
+<div style="display:grid;gap:6px">
+${["Cụ thể: nêu rõ đối tượng, nơi chốn, điều cần tìm","Đo được: có thể đếm, đo hoặc ghi nhận bằng số liệu","Khả thi: làm được trong vài tuần với điều kiện em có","Chưa có đáp án sẵn trên mạng hay trong sách","Có ý nghĩa: câu trả lời giúp ích cho ai đó"].map((c,i)=>`<label class="chk"><input type="checkbox" id="qc${i}"><span>${c}</span></label>`).join("")}
+</div>
+<button class="btn" id="qBtn">Đánh giá câu hỏi</button><div class="out" id="qOut" hidden></div>`,
+init(){ $("qBtn").onclick=()=>{
+  const txt=$("qIn").value.trim(); const n=[0,1,2,3,4].filter(i=>$("qc"+i).checked).length; const o=$("qOut"); o.hidden=false;
+  if(!txt){o.innerHTML='<span class="no">Hãy viết câu hỏi của em trước.</span>';return}
+  const tips=[]; const w=txt.split(/\s+/).length;
+  if(w<8)tips.push("Câu hỏi còn ngắn, có thể chưa đủ cụ thể. Thử thêm đối tượng (ai?) và phạm vi (ở đâu, khi nào?).");
+  if(/tốt không|có hại không|thế nào là/i.test(txt))tips.push("Những từ như \"tốt\", \"có hại\" khó đo. Hãy thay bằng điều đo được (điểm số, số giờ, tỉ lệ…).");
+  if(!/\?$/.test(txt))tips.push("Câu hỏi nên kết thúc bằng dấu chấm hỏi.");
+  const verdict=n===5?'<span class="ok">Câu hỏi đạt cả 5 tiêu chí. Hãy cho thầy cô hướng dẫn xem trước khi bắt đầu.</span>':`<span class="no">Câu hỏi đạt ${n}/5 tiêu chí.</span> Hãy sửa để đạt các tiêu chí còn thiếu.`;
+  o.innerHTML=verdict+(tips.length?"<br><br>Gợi ý:<br>• "+tips.map(esc).join("<br>• "):"");
+}}},
+source:{html:`
+<p style="margin:0"><b>Phần 1. Chấm điểm một nguồn tài liệu</b> (1 = kém, 3 = tốt)</p>
+${["Mới","Liên quan","Uy tín","Chính xác","Mục đích khách quan"].map((c,i)=>`<label class="f" for="cr${i}">${c}<select id="cr${i}"><option value="1">1 - Kém</option><option value="2" selected>2 - Trung bình</option><option value="3">3 - Tốt</option></select></label>`).join("")}
+<button class="btn" id="crBtn">Xem kết quả</button><div class="out" id="crOut" hidden></div>
+<p style="margin:12px 0 0"><b>Phần 2. Tạo trích dẫn APA</b></p>
+<div class="row"><label class="f" for="apA">Tác giả (Họ, Tên viết tắt)<input type="text" id="apA" value="Nguyễn, V. A."></label><label class="f" for="apY">Năm<input type="text" id="apY" value="2024"></label></div>
+<label class="f" for="apT">Tên bài hoặc sách<input type="text" id="apT" value="Ảnh hưởng của lời nhắc nhở đến thói quen học tập của học sinh"></label>
+<div class="row"><label class="f" for="apS">Tạp chí / Nhà xuất bản / Trang web<input type="text" id="apS" value="Tạp chí Giáo dục"></label><label class="f" for="apU">Đường dẫn (nếu có)<input type="text" id="apU" placeholder="https://..."></label></div>
+<div class="btns"><button class="btn" id="apBtn">Tạo trích dẫn</button><button class="btn ghost" id="apCopy">Sao chép</button></div><div class="out" id="apOut"></div>`,
+init(){
+  $("crBtn").onclick=()=>{const s=[0,1,2,3,4].reduce((a,i)=>a+Number($("cr"+i).value),0);const o=$("crOut");o.hidden=false;
+    const low=[0,1,2,3,4].filter(i=>$("cr"+i).value==="1").length;
+    o.innerHTML=`Tổng điểm: <b>${s}/15</b>. `+(low?'<span class="no">Có tiêu chí bị chấm 1. Nên tìm nguồn khác hoặc đối chiếu thêm.</span>':s>=13?'<span class="ok">Nguồn đáng tin cậy, có thể dùng.</span>':s>=10?"Dùng được nhưng nên đối chiếu với nguồn khác.":'<span class="no">Nguồn yếu, nên tìm nguồn khác.</span>')};
+  const mk=()=>{const v=k=>$(k).value.trim();let c=`${v("apA")||"Không rõ tác giả"} (${v("apY")||"n.d."}). ${v("apT")}. ${v("apS")}.`;if(v("apU"))c+=" "+v("apU");$("apOut").textContent=c};
+  $("apBtn").onclick=mk; mk();
+  $("apCopy").onclick=()=>{const t=$("apOut").textContent;navigator.clipboard?.writeText(t).then(()=>{$("apCopy").textContent="Đã sao chép"},()=>selectEl($("apOut")))||selectEl($("apOut"))};
+}},
+vars:{html:`<p style="margin:0">Đề tài: <i>"Nhiệt độ nước có ảnh hưởng đến thời gian tan của viên đường không?"</i> Xếp mỗi yếu tố vào loại biến đúng.</p>
+${[["Nhiệt độ nước","doclap"],["Thời gian viên đường tan hết","phuthuoc"],["Lượng nước trong cốc","kiemsoat"],["Loại và kích thước viên đường","kiemsoat"],["Có khuấy hay không khuấy","kiemsoat"]].map((x,i)=>`<label class="f" for="v${i}">${x[0]}<select id="v${i}" data-a="${x[1]}"><option value="">— Chọn —</option><option value="doclap">Biến độc lập</option><option value="phuthuoc">Biến phụ thuộc</option><option value="kiemsoat">Biến kiểm soát</option></select></label>`).join("")}
+<button class="btn" id="vBtn">Kiểm tra</button><div class="out" id="vOut" hidden></div>
+<p style="margin:12px 0 0"><b>Viết giả thuyết của em</b></p>
+<div class="row"><label class="f" for="hN">Nếu…<input type="text" id="hN" placeholder="tăng nhiệt độ nước"></label><label class="f" for="hT">thì…<input type="text" id="hT" placeholder="đường tan nhanh hơn"></label></div>
+<label class="f" for="hV">vì…<input type="text" id="hV" placeholder="các phân tử nước chuyển động nhanh hơn"></label>
+<div class="out" id="hOut"></div>`,
+init(){
+  $("vBtn").onclick=()=>{let ok=0;const sel=[...document.querySelectorAll("[id^=v][data-a]")];sel.forEach(s=>{const r=s.value===s.dataset.a;if(r)ok++;s.style.borderColor=s.value?(r?"var(--good)":"var(--bad)"):""});
+    const o=$("vOut");o.hidden=false;o.innerHTML=ok===sel.length?'<span class="ok">Chính xác cả 5!</span> Chỉ có một biến độc lập. Thay đổi nhiều thứ cùng lúc thì em sẽ không biết điều gì gây ra kết quả.':`Đúng ${ok}/${sel.length}. Gợi ý: chỉ có <b>một</b> điều em chủ động thay đổi, và <b>một</b> điều em đo.`};
+  const h=()=>{const v=k=>$(k).value.trim();$("hOut").innerHTML=`<b>Nếu</b> ${esc(v("hN")||"…")} <b>thì</b> ${esc(v("hT")||"…")} <b>vì</b> ${esc(v("hV")||"…")}.`};
+  ["hN","hT","hV"].forEach(k=>$(k).addEventListener("input",h));h();
+}},
+plan:{html:`<p style="margin:0">Điền kế hoạch nghiên cứu của em. Bản tóm tắt sẽ tự tạo bên dưới để em gửi thầy cô hướng dẫn.</p>
+<label class="f" for="pQ">Câu hỏi nghiên cứu<input type="text" id="pQ" value="${esc(CASE)}"></label>
+<label class="f" for="pH">Giả thuyết<input type="text" id="pH" value="Nhóm dùng ứng dụng có tỉ lệ nộp bài đúng hạn cao hơn nhóm không dùng"></label>
+<div class="row"><label class="f" for="pM">Phương pháp<select id="pM"><option>Thực nghiệm có đối chứng</option><option>Khảo sát bằng phiếu hỏi</option><option>Phỏng vấn</option><option>Quan sát</option><option>Thiết kế, chế tạo và thử nghiệm</option></select></label>
+<label class="f" for="pN">Cỡ mẫu (số người / số lần đo)<input type="number" id="pN" value="60" min="1"></label></div>
+<div class="row"><label class="f" for="pIV">Biến độc lập<input type="text" id="pIV" value="Có / không dùng ứng dụng nhắc học"></label><label class="f" for="pDV">Biến phụ thuộc<input type="text" id="pDV" value="Tỉ lệ bài nộp đúng hạn"></label></div>
+<label class="f" for="pT">Thời gian thực hiện<input type="text" id="pT" value="4 tuần"></label>
+<label class="chk"><input type="checkbox" id="pE" checked><span>Có phiếu đồng ý của người tham gia (và phụ huynh nếu dưới 18 tuổi)</span></label>
+<div class="btns"><button class="btn ghost" id="pCopy">Sao chép bản tóm tắt</button></div>
+<div class="out" id="pOut"></div>`,
+init(){
+  const ids=["pQ","pH","pM","pN","pIV","pDV","pT","pE"];
+  const r=()=>{const v=k=>$(k).value.trim();const n=Number(v("pN"));
+    let t=`KẾ HOẠCH NGHIÊN CỨU\nCâu hỏi: ${v("pQ")}\nGiả thuyết: ${v("pH")}\nPhương pháp: ${v("pM")}\nCỡ mẫu: ${n||"?"}\nBiến độc lập: ${v("pIV")}\nBiến phụ thuộc: ${v("pDV")}\nThời gian: ${v("pT")}\nĐạo đức: ${$("pE").checked?"Đã có phiếu đồng ý":"CHƯA có phiếu đồng ý"}`;
+    const warn=[];if(n&&n<30)warn.push("Cỡ mẫu dưới 30: hãy nêu rõ đây là hạn chế trong báo cáo.");if(!$("pE").checked)warn.push("Cần có sự đồng ý của người tham gia trước khi bắt đầu.");
+    if(v("pM")==="Thực nghiệm có đối chứng"&&n)t+=`\n→ Chia ngẫu nhiên thành 2 nhóm, mỗi nhóm khoảng ${Math.floor(n/2)} người.`;
+    $("pOut").textContent=t+(warn.length?"\n\nLưu ý:\n- "+warn.join("\n- "):"")};
+  ids.forEach(k=>{$(k).addEventListener("input",r);$(k).addEventListener("change",r)});r();
+  $("pCopy").onclick=()=>{navigator.clipboard?.writeText($("pOut").textContent).then(()=>{$("pCopy").textContent="Đã sao chép"},()=>selectEl($("pOut")))||selectEl($("pOut"))};
+}},
+journal:{html:`<p style="margin:0">Nhật ký nghiên cứu của em. Nội dung được lưu trong trình duyệt này, nên hãy sao chép ra nơi khác để giữ lâu dài.</p>
+<div class="btns"><button class="btn ghost" id="jAdd">Thêm dòng ngày hôm nay</button></div>
+<label class="f" for="jText">Nhật ký<textarea id="jText" style="min-height:200px;font-family:var(--mono);font-size:14px"></textarea></label>
+<div class="btns"><button class="btn ghost" id="jCopy">Sao chép nhật ký</button></div><span id="jSaved" style="font-size:13px;color:var(--muted)"></span>`,
+init(){
+  const ta=$("jText");ta.value=S.journal||"27/10 - Lập bảng số liệu trên Google Sheets. Đã có 58/60 phiếu đồng ý.\n";
+  ta.addEventListener("input",()=>{S.journal=ta.value;save();$("jSaved").textContent="Đã lưu"});
+  $("jAdd").onclick=()=>{const d=new Date();ta.value+=`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")} - Việc đã làm: … | Điều bất thường: … | Ý tưởng: …\n`;S.journal=ta.value;save();ta.focus()};
+  $("jCopy").onclick=()=>{navigator.clipboard?.writeText(ta.value).then(()=>{$("jCopy").textContent="Đã sao chép"},()=>ta.select())||ta.select()};
+}},
+stats:{html:`<p style="margin:0">Nhập số liệu hai nhóm, cách nhau bằng dấu cách hoặc xuống dòng (số thập phân viết 7,5 hay 7.5 đều được). Số liệu mẫu là tỉ lệ % bài nộp đúng hạn của mỗi bạn.</p>
+<div class="row"><label class="f" for="sA">Nhóm A (thực nghiệm)<textarea id="sA">90 85 100 80 95 85 90 75 100 80</textarea></label>
+<label class="f" for="sB">Nhóm B (đối chứng)<textarea id="sB">70 65 80 60 75 85 70 55 75 75</textarea></label></div>
+<button class="btn" id="sBtn">Tính toán</button>
+<div class="tbl"><table id="sTbl"></table></div><div class="chart" id="sChart"></div><div class="out" id="sOut"></div>`,
+init(){
+  const parse=s=>s.split(/[\s;]+/).filter(Boolean).map(x=>Number(x.replace(",","."))).filter(x=>!isNaN(x));
+  const st=a=>{const n=a.length;if(!n)return null;const m=a.reduce((x,y)=>x+y,0)/n;const s=[...a].sort((x,y)=>x-y);const med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;const sd=n>1?Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(n-1)):0;return{n,m,med,sd,min:s[0],max:s[n-1]}};
+  const f=x=>x.toLocaleString("vi-VN",{maximumFractionDigits:1});
+  const run=()=>{const A=st(parse($("sA").value)),B=st(parse($("sB").value));
+    if(!A||!B){$("sOut").textContent="Mỗi nhóm cần ít nhất một số.";return}
+    $("sTbl").innerHTML=`<tr><th></th><th>n</th><th>Trung bình</th><th>Trung vị</th><th>Độ lệch chuẩn</th><th>Nhỏ nhất – Lớn nhất</th></tr>`+[["Nhóm A",A],["Nhóm B",B]].map(([k,s])=>`<tr><td>${k}</td><td>${s.n}</td><td>${f(s.m)}</td><td>${f(s.med)}</td><td>${f(s.sd)}</td><td>${f(s.min)} – ${f(s.max)}</td></tr>`).join("");
+    const top=Math.max(A.m+A.sd,B.m+B.sd,1)*1.15,W=420,H=230,pl=44,pb=34,pt=14,ch=H-pb-pt,y=v=>pt+ch-(v/top)*ch;
+    const ticks=[0,.25,.5,.75,1].map(k=>top*k);
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Biểu đồ trung bình hai nhóm">`;
+    ticks.forEach(t=>{svg+=`<line x1="${pl}" x2="${W-10}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(t)+4}" font-size="11" text-anchor="end" fill="var(--muted)">${Math.round(t)}</text>`});
+    [["Nhóm A",A,"var(--blue)"],["Nhóm B",B,"var(--orange)"]].forEach(([k,s,c],i)=>{const x=pl+50+i*170,bw=90;
+      svg+=`<rect x="${x}" y="${y(s.m)}" width="${bw}" height="${pt+ch-y(s.m)}" fill="${c}" rx="2"/>`;
+      svg+=`<line x1="${x+bw/2}" x2="${x+bw/2}" y1="${y(s.m+s.sd)}" y2="${y(Math.max(0,s.m-s.sd))}" stroke="var(--fg)" stroke-width="1.5"/><line x1="${x+bw/2-8}" x2="${x+bw/2+8}" y1="${y(s.m+s.sd)}" y2="${y(s.m+s.sd)}" stroke="var(--fg)" stroke-width="1.5"/><line x1="${x+bw/2-8}" x2="${x+bw/2+8}" y1="${y(Math.max(0,s.m-s.sd))}" y2="${y(Math.max(0,s.m-s.sd))}" stroke="var(--fg)" stroke-width="1.5"/>`;
+      svg+=`<text x="${x+bw/2}" y="${H-12}" font-size="13" text-anchor="middle" fill="var(--fg)">${k} (n=${s.n})</text>`});
+    svg+="</svg>";$("sChart").innerHTML=svg;
+    const diff=A.m-B.m,pooled=Math.sqrt((A.sd**2+B.sd**2)/2)||1,d=Math.abs(diff)/pooled;
+    $("sOut").innerHTML=`Chênh lệch trung bình: <b>${f(diff)}</b>. Thanh dọc trên mỗi cột là ±1 độ lệch chuẩn.<br>`+
+      (d>=0.8?"Chênh lệch lớn so với độ phân tán của số liệu. Đây là dấu hiệu mạnh, nhưng vẫn cần kiểm định thống kê và nêu hạn chế về cỡ mẫu.":d>=0.5?"Chênh lệch ở mức vừa so với độ phân tán. Hãy thận trọng khi kết luận.":"Chênh lệch nhỏ so với độ phân tán. Có thể chỉ do ngẫu nhiên; chưa nên kết luận hai nhóm khác nhau.")+
+      (A.n<30||B.n<30?"<br>Lưu ý: mỗi nhóm có dưới 30 số liệu.":"")};
+  $("sBtn").onclick=run;run();
+}},
+imrad:{html:`<p style="margin:0">Các câu dưới đây lấy từ báo cáo mẫu. Mỗi câu thuộc phần nào của báo cáo?</p>
+${[["Mỗi tuần, lớp 10A có khoảng 10 bạn quên nộp bài tập về nhà.","I"],["60 học sinh được bốc thăm chia thành hai nhóm, mỗi nhóm 30 bạn.","M"],["Nhóm thực nghiệm nộp đúng hạn trung bình 88% số bài, nhóm đối chứng 71%.","R"],["Kết quả phù hợp với nghiên cứu trước ở sinh viên; tuy nhiên mẫu chỉ gồm một trường.","D"],["Giáo viên ghi nhận việc nộp bài vào mỗi thứ Sáu trong 4 tuần.","M"],["Câu hỏi đặt ra là liệu ứng dụng nhắc học có giúp cải thiện điều này không.","I"]].map((x,i)=>`<label class="f" for="im${i}">${x[0]}<select id="im${i}" data-a="${x[1]}"><option value="">— Chọn phần —</option><option value="I">Đặt vấn đề</option><option value="M">Phương pháp</option><option value="R">Kết quả</option><option value="D">Thảo luận</option></select></label>`).join("")}
+<button class="btn" id="imBtn">Kiểm tra</button><div class="out" id="imOut" hidden></div>`,
+init(){$("imBtn").onclick=()=>{let ok=0;const sel=[...document.querySelectorAll("[id^=im][data-a]")];sel.forEach(s=>{const r=s.value===s.dataset.a;if(r)ok++;s.style.borderColor=s.value?(r?"var(--good)":"var(--bad)"):""});
+  const o=$("imOut");o.hidden=false;o.innerHTML=ok===sel.length?'<span class="ok">Chính xác cả 6!</span> Em đã nắm cấu trúc IMRaD.':`Đúng ${ok}/${sel.length}. Mẹo: Kết quả chỉ nêu số liệu; Thảo luận mới so sánh, giải thích và nêu hạn chế.`}}},
+defense:{html:`<p style="margin:0">Những câu hội đồng hay hỏi. Tự trả lời trong đầu trước, sau đó bấm vào để xem gợi ý.</p>
+<div class="flip">
+${[["Vì sao em chọn đề tài này?","Kể quan sát thực tế đã khiến em tò mò, kèm một con số nếu có."],["Đề tài của em có gì mới?","Chỉ ra khoảng trống ở bài 2: đối tượng mới, cách làm mới hoặc bối cảnh Việt Nam."],["Làm sao em chắc kết quả không phải do yếu tố khác?","Nói về nhóm đối chứng, chia nhóm ngẫu nhiên và các biến kiểm soát."],["Cỡ mẫu của em có đủ không?","Nêu số lượng, thừa nhận hạn chế và cách em sẽ mở rộng nếu làm tiếp."],["Nếu làm lại, em sẽ thay đổi điều gì?","Chọn 1–2 điểm cụ thể. Câu trả lời này cho thấy em biết tự đánh giá."],["Ứng dụng thực tế của kết quả là gì?","Ai được lợi, và lợi như thế nào: học sinh, giáo viên, nhà trường."]].map(x=>`<details><summary>${x[0]}</summary><p>${x[1]}</p></details>`).join("")}
+</div>
+<p style="margin:10px 0 0"><b>Kiểm tra poster của em</b></p>
+${["Tên đề tài đọc được từ xa 3 mét","Kết quả chính nổi bật nhất","Mỗi biểu đồ có tên, tên trục và n","Mỗi đoạn chữ không quá 50 từ","Có nêu hạn chế và hướng phát triển","Đã tập thuyết trình đúng 5 phút"].map((c,i)=>`<label class="chk"><input type="checkbox" id="ps${i}"><span>${c}</span></label>`).join("")}`,
+init(){}}
+};
+function selectEl(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+/* ---------- render ---------- */
+const PH=[{k:"Chuẩn bị",r:"Bài 1–3",d:"Đặt câu hỏi, đọc tài liệu, nêu giả thuyết"},{k:"Thực hiện",r:"Bài 4–6",d:"Thiết kế, thu thập và phân tích dữ liệu"},{k:"Công bố",r:"Bài 7–8",d:"Viết báo cáo, trình bày, bảo vệ"}];
+const ph=i=>i<3?0:i<6?1:2;
+function home(){
+  const nDone=L.filter(l=>S.done[l.id]).length;
+  return `<div class="hero"><div class="eyebrow">Dành cho học sinh THPT</div>
+<h1>Sổ tay Nhà nghiên cứu nhí</h1>
+<p>Tám bài học dẫn em đi qua đủ các bước của một đề tài nghiên cứu khoa học: từ một điều em tò mò đến lúc đứng trước hội đồng. Mỗi bài có phần thực hành và câu hỏi kiểm tra nhanh.</p>
+<div class="stripe" aria-hidden="true"><i></i><i></i><i></i></div></div>
+<div class="phases">${PH.map((p,i)=>`<div class="p${i}"><b>${p.k} · ${p.r}</b><span>${p.d}</span></div>`).join("")}</div>
+<div class="case p2"><div class="lbl">Đề tài mẫu xuyên suốt 8 bài</div><p><b>${CASE}</b></p><p>Ở mỗi bài, em sẽ thấy đề tài này tiến thêm một bước. Hãy làm song song với đề tài của chính em.</p></div>
+<h2>${nDone?`Em đã hoàn thành ${nDone}/8 bài`:"Bắt đầu từ bài 1"}</h2>
+<div class="cards">${L.map((l,i)=>`<a class="card p${ph(i)}" href="#${l.id}"><span class="top"><span class="n">${i+1}</span>${S.done[l.id]?'<span class="st">Đã xong ✓</span>':""}</span><b>${l.t}</b><span class="d">${l.d}</span></a>`).join("")}</div>
+<h2>Cách học hiệu quả</h2>
+<ul><li>Học theo thứ tự, vì mỗi bước dựa vào kết quả của bước trước.</li><li>Làm phần thực hành với đề tài của chính em, đừng chỉ đọc.</li><li>Sau mỗi bài, cho thầy cô hướng dẫn xem sản phẩm.</li><li>Tiến độ được lưu trong trình duyệt em đang dùng.</li></ul>`;
+}
+function lesson(i){
+  const l=L[i];
+  return `<span class="phase">Chặng ${PH[ph(i)].k} · <b>Bài ${i+1}/8</b></span><h1>${l.t}</h1><p class="lead">${l.d}</p>
+<div class="goal"><b>Sau bài này em sẽ</b><ul>${l.goals.map(g=>`<li>${g}</li>`).join("")}</ul></div>
+${l.body}
+<div class="case"><div class="lbl">Đề tài mẫu · bước ${i+1}</div><p>${l.caseText}</p></div>
+<section class="lab"><div class="lab-h">Thực hành</div><div class="tool">${TOOLS[l.tool].html}</div></section>
+<section class="lab"><div class="lab-h">Kiểm tra nhanh</div><div class="quiz">${l.quiz.map((q,qi)=>`<div class="q" data-a="${q.a}"><p class="qt">${qi+1}. ${q.q}</p><div class="opts">${q.o.map((o,oi)=>`<button data-i="${oi}">${o}</button>`).join("")}</div><p class="expl" hidden>${q.e}</p></div>`).join("")}</div></section>
+<div class="finish"><a class="navbtn" href="#${i?L[i-1].id:"trang-chu"}">← ${i?"Bài "+i:"Trang chủ"}</a>
+<button class="btn${S.done[l.id]?" isdone":""}" id="doneBtn">${S.done[l.id]?"Đã hoàn thành ✓":"Đánh dấu hoàn thành"}</button>
+<a class="navbtn" href="#${i<7?L[i+1].id:"trang-chu"}">${i<7?"Bài "+(i+2):"Trang chủ"} →</a></div>`;
+}
+function nav(cur){
+  let h=`<a href="#trang-chu" class="p0${cur<0?" on":""}"><span class="n">⌂</span><span>Trang chủ</span><span></span></a>`;
+  L.forEach((l,i)=>{if(i===0||ph(i)!==ph(i-1))h+=`<div class="grp p${ph(i)}">${PH[ph(i)].k}</div>`;
+    h+=`<a href="#${l.id}" class="p${ph(i)}${cur===i?" on":""}"><span class="n">${i+1}</span><span>${l.t}</span><span class="tick${S.done[l.id]?" done":""}"></span></a>`});
+  $("toc").innerHTML=h;
+  $("mobsel").innerHTML=`<option value="trang-chu">Trang chủ</option>`+L.map((l,i)=>`<option value="${l.id}"${cur===i?" selected":""}>Bài ${i+1}. ${l.t}${S.done[l.id]?" ✓":""}</option>`).join("");
+  const n=L.filter(l=>S.done[l.id]).length;$("progText").textContent=`Đã hoàn thành ${n}/8 bài`;
+  $("progBar").innerHTML=L.map((l,i)=>`<span class="p${ph(i)}" style="width:12.5%;background:${S.done[l.id]?"var(--ph)":"transparent"}"></span>`).join("");
+}
+function route(){
+  const h=location.hash.slice(1);const i=L.findIndex(l=>l.id===h);
+  $("page").className="page p"+(i<0?0:ph(i));$("page").innerHTML=i<0?home():lesson(i);nav(i);
+  if(i>=0){TOOLS[L[i].tool].init();
+    document.querySelectorAll(".q").forEach(q=>q.querySelectorAll(".opts button").forEach(b=>b.onclick=()=>{
+      const a=Number(q.dataset.a);q.querySelectorAll(".opts button").forEach(x=>{x.classList.remove("right","wrong");if(Number(x.dataset.i)===a)x.classList.add("right")});
+      if(Number(b.dataset.i)!==a)b.classList.add("wrong");q.querySelector(".expl").hidden=false}));
+    $("doneBtn").onclick=()=>{S.done[L[i].id]=!S.done[L[i].id];save();$("doneBtn").textContent=S.done[L[i].id]?"Đã hoàn thành ✓":"Đánh dấu hoàn thành";$("doneBtn").classList.toggle("isdone",!!S.done[L[i].id]);nav(i)};
+  }
+  window.scrollTo(0,0);
+}
+$("mobsel").onchange=e=>{location.hash=e.target.value};
+window.addEventListener("hashchange",route);
+route();
+</script>
+
+</body>
+</html>
